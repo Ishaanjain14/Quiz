@@ -54,8 +54,9 @@ export const LoginPage = () => {
           </button>
         </form>
         <p className="text-center text-sm text-red-500 mt-2">
-          Click Login To proceed
+          Click Login To Proceed!
         </p>
+
       </div>
 
       <footer className="text-white mt-10">
