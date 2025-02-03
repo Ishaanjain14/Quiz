@@ -2,8 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { InstructionsPage } from "./components/Instructions";
 import { ExamInterface } from "./components/ExamInterface";
 import { LoginPage } from "./components/loginpage";
-import {InstructionsPage} from "./components/Instructions";
-import {ExamInterface} from "./components/ExamInterface";
+
 import {UploadExcel} from "./components/UploadExcel";
 
 function App() {
