@@ -1,0 +1,74 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+
+  
+  /* Heading */
+  h1, h2 {
+    color: #333;
+    font-size: 22px;
+    margin-bottom: 15px;
+  }
+  
+  /* Input Field */
+  input[type="file"] {
+    display: block;
+    margin: 15px auto;
+    padding: 10px;
+    border: 2px dashed #007bff;
+    border-radius: 5px;
+    width: 100%;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    text-align: center;
+  }
+  
+  /* Buttons */
+  button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 10px;
+    transition: background 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* Upload Progress */
+  p {
+    font-size: 16px;
+    color: #555;
+  }
+  
+  
+  .notification {
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  
+
+

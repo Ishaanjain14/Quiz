@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import io from "socket.io-client";
-
+import "./upload.css"
 const socket = io("http://localhost:3002"); // Connect to your backend server
 
 export const UploadExcel = () => {
