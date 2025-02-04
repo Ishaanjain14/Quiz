@@ -198,7 +198,7 @@ export const ExamInterface = () => {
             </div>
 
             <div className="navigation">
-              <button className="nav-btn" onClick={handlePrev} disabled={currentQuestionIndex === 0}>⏪ BACK</button>
+              <button className="nav-btn" onClick={handlePrev} disabled={currentQuestionIndex === 0}>BACK</button>
               <button className="save-and-next-btn" onClick={handleSaveAndNext}>SAVE & NEXT</button>
               <button className="save-and-mark-btn" onClick={handleSaveAndMarkForReview}>SAVE & MARK FOR REVIEW</button>
               <button className="submit-btn" onClick={handleSubmit}>SUBMIT</button>

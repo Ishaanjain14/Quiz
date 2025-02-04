@@ -9,7 +9,7 @@ export const InstructionsPage = () => {
         <p className="instructions-note">Please read the instructions carefully</p>
 
         <ol className="instructions-list">
-          <li>Total duration of JEE-Main - 180 minutes.</li>
+          <li>Total duration of Quiz- 180 minutes.</li>
           <li>
             The clock will be set at the server. The countdown timer will display the remaining time. The exam will end automatically when time runs out.
           </li>

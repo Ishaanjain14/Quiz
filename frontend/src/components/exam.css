@@ -1,5 +1,19 @@
-.exam-container {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    height: 100%;
     font-family: Arial, sans-serif;
+    overflow-x: hidden;
+  }
+  
+  .exam-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     background-color: #f5f5f5;
     padding: 20px;
   }
@@ -7,8 +21,10 @@
   .exam-header {
     text-align: center;
     background-color: #ff9800;
-    padding: 10px;
+    padding: 15px;
     color: white;
+    font-size: 24px;
+    font-weight: bold;
   }
   
   .exam-subtitle {
@@ -21,20 +37,21 @@
     display: flex;
     justify-content: space-between;
     background-color: #0073e6;
-    padding: 10px;
+    padding: 15px;
     border-radius: 5px;
+    margin-bottom: 20px;
   }
   
   .subject-buttons {
     display: flex;
-    gap: 10px;
+    gap: 15px;
   }
   
   .subject-btn {
     background-color: #0044cc;
     color: white;
     border: none;
-    padding: 10px;
+    padding: 12px 20px;
     cursor: pointer;
     font-weight: bold;
     border-radius: 5px;
@@ -43,7 +60,7 @@
   .download-btn {
     background-color: #ffcc00;
     color: black;
-    padding: 10px;
+    padding: 12px 20px;
     font-weight: bold;
     border: none;
     cursor: pointer;
@@ -52,9 +69,11 @@
   
   .exam-content {
     background: white;
-    padding: 20px;
+    padding: 25px;
     margin-top: 10px;
     border-radius: 10px;
+    flex-grow: 1;
+    overflow-y: auto;
   }
   
   .question-box {
@@ -74,11 +93,11 @@
   .question-controls {
     margin-top: 15px;
     display: flex;
-    gap: 10px;
+    gap: 15px;
   }
   
   .action-btn {
-    padding: 10px;
+    padding: 12px 20px;
     font-size: 14px;
     cursor: pointer;
     border-radius: 5px;
@@ -107,13 +126,13 @@
   }
   
   .navigation {
-    margin-top: 15px;
+    margin-top: 20px;
     display: flex;
     justify-content: space-between;
   }
   
   .nav-btn {
-    padding: 10px;
+    padding: 12px 20px;
     font-size: 14px;
     border-radius: 5px;
     border: none;
@@ -124,7 +143,7 @@
     background-color: #28a745;
     color: white;
     font-weight: bold;
-    padding: 10px;
+    padding: 15px 30px;
     border-radius: 5px;
     border: none;
     cursor: pointer;
@@ -135,19 +154,43 @@
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     gap: 5px;
+    background-color: #0073e6;
+    border-radius: 4px;
   }
   
   .question-num {
-    background-color: #f0f0f0;
-    padding: 10px;
+    background-color: #0044cc;
+    padding: 12px;
     text-align: center;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
+    font-size: 16px;
   }
   
   .question-num:hover {
     background-color: #ddd;
   }
   
+  @media (max-width: 768px) {
+    .exam-topbar {
+      flex-direction: column;
+      padding: 10px;
+    }
+  
+    .subject-buttons {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .subject-btn,
+    .download-btn {
+      padding: 10px;
+      width: 100%;
+    }
+  
+    .question-palette {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
