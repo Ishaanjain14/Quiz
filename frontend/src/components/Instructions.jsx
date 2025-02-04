@@ -1,27 +1,8 @@
 // import  React from "react";
-
+import "./instructions.css"
 export const InstructionsPage = () => {
   return (
     <div className="instructions-container">
-      <header className="headerReact">
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/National_Testing_Agency.svg/512px-National_Testing_Agency.svg.png"
-          alt="NTA Logo"
-          className="logo"
-        />
-        <div>
-          <h2>National Testing Agency</h2>
-          <p>Excellence in Assessment</p>
-        </div>
-        <div className="right-section">
-          <label>Choose Your Default Language:</label>
-          <select>
-            <option>English</option>
-            <option>Hindi</option>
-            <option>Other</option>
-          </select>
-        </div>
-      </header>
 
       <main className="instructions-content">
         <h2>GENERAL INSTRUCTIONS</h2>

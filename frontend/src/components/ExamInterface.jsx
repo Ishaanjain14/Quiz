@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import "./exam.css"
 export const ExamInterface = () => {
   const [questions, setQuestions] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState("Physics");
@@ -155,10 +155,6 @@ export const ExamInterface = () => {
 
   return (
     <div className="exam-container">
-      <header className="exam-header">
-        <h1>NATIONAL TESTING AGENCY</h1>
-        <p className="exam-subtitle">Excellence in Assessment</p>
-      </header>
 
       <div className="exam-topbar">
         <div className="subject-buttons">
