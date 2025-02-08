@@ -1,242 +1,146 @@
 [
   {
     "id": 1,
-    "subject": "Physics",
+    "subject": "physics",
     "question": "What is the SI unit of force?",
-    "options": ["Newton", "Joule", "Watt", "Pascal"],
-    "correctAnswer": "Newton",
-    "marks": 1
+    "options": [
+      "Newton",
+      "Joule",
+      "Watt",
+      "Pascal"
+    ],
+    "correctAnswer": "Newton"
   },
   {
     "id": 2,
-    "subject": "Physics",
+    "subject": "physics",
     "question": "Which law states that an object at rest stays at rest unless acted upon by an external force?",
-    "options": ["Newton's First Law", "Newton's Second Law", "Newton's Third Law", "Law of Gravitation"],
-    "correctAnswer": "Newton's First Law",
-    "marks": 1
+    "options": [
+      "Newton's Second Law",
+      "Newton's Third Law",
+      "Law of Gravitation",
+      "Newton's First Law"
+    ],
+    "correctAnswer": "Newton's First Law"
   },
   {
     "id": 3,
-    "subject": "Physics",
+    "subject": "physics",
     "question": "What is the speed of light in vacuum?",
-    "options": ["3 × 10^8 m/s", "3 × 10^6 m/s", "3 × 10^4 m/s", "3 × 10^2 m/s"],
-    "correctAnswer": "3 × 10^8 m/s",
-    "marks": 1
+    "options": [
+      "3 × 10^8 m/s",
+      "3 × 10^6 m/s",
+      "3 × 10^4 m/s",
+      "3 × 10^2 m/s"
+    ],
+    "correctAnswer": "3 × 10^8 m/s"
   },
   {
     "id": 4,
-    "subject": "Physics",
-    "question": "Who discovered the law of gravitation?",
-    "options": ["Newton", "Einstein", "Galileo", "Kepler"],
-    "correctAnswer": "Newton",
-    "marks": 1
+    "subject": "physics",
+    "question": "What is the speed of light in vacuum?",
+    "options": [
+      "3 × 10^8 m/s",
+      "3 × 10^6 m/s",
+      "3 × 10^4 m/s",
+      "3 × 10^2 m/s"
+    ],
+    "correctAnswer": "3 × 10^8 m/s"
   },
   {
     "id": 5,
-    "subject": "Physics",
-    "question": "What is the unit of electrical resistance?",
-    "options": ["Ohm", "Ampere", "Volt", "Watt"],
-    "correctAnswer": "Ohm",
-    "marks": 1
+    "subject": "chemistry",
+    "question": "What is the SI unit of force?",
+    "options": [
+      "Newton",
+      "Joule",
+      "Watt",
+      "Pascal"
+    ],
+    "correctAnswer": "Newton"
   },
   {
     "id": 6,
-    "subject": "Physics",
-    "question": "What does a convex lens do?",
-    "options": ["Diverges light", "Converges light", "Absorbs light", "Reflects light"],
-    "correctAnswer": "Converges light",
-    "marks": 1
+    "subject": "chemistry",
+    "question": "Which law states that an object at rest stays at rest unless acted upon by an external force?",
+    "options": [
+      "Newton's Second Law",
+      "Newton's Third Law",
+      "Law of Gravitation",
+      "Newton's First Law"
+    ],
+    "correctAnswer": "Newton's First Law"
   },
   {
     "id": 7,
-    "subject": "Physics",
-    "question": "Which particle has a negative charge?",
-    "options": ["Proton", "Neutron", "Electron", "Photon"],
-    "correctAnswer": "Electron",
-    "marks": 1
+    "subject": "chemistry",
+    "question": "What is the speed of light in vacuum?",
+    "options": [
+      "3 × 10^8 m/s",
+      "3 × 10^6 m/s",
+      "3 × 10^4 m/s",
+      "3 × 10^2 m/s"
+    ],
+    "correctAnswer": "3 × 10^8 m/s"
   },
   {
     "id": 8,
-    "subject": "Physics",
-    "question": "Which of the following is a scalar quantity?",
-    "options": ["Velocity", "Acceleration", "Force", "Mass"],
-    "correctAnswer": "Mass",
-    "marks": 1
+    "subject": "chemistry",
+    "question": "What is the speed of light in vacuum?",
+    "options": [
+      "3 × 10^8 m/s",
+      "3 × 10^6 m/s",
+      "3 × 10^4 m/s",
+      "3 × 10^2 m/s"
+    ],
+    "correctAnswer": "3 × 10^8 m/s"
   },
   {
     "id": 9,
-    "subject": "Physics",
-    "question": "Which wave type does not need a medium to propagate?",
-    "options": ["Sound waves", "Water waves", "Electromagnetic waves", "Seismic waves"],
-    "correctAnswer": "Electromagnetic waves",
-    "marks": 1
+    "subject": "Mathematics",
+    "question": "What is the SI unit of force?",
+    "options": [
+      "Newton",
+      "Joule",
+      "Watt",
+      "Pascal"
+    ],
+    "correctAnswer": "Newton"
   },
   {
     "id": 10,
-    "subject": "Physics",
-    "question": "Which color of light has the highest frequency?",
-    "options": ["Red", "Blue", "Violet", "Green"],
-    "correctAnswer": "Violet",
-    "marks": 1
+    "subject": "Mathematics",
+    "question": "Which law states that an object at rest stays at rest unless acted upon by an external force?",
+    "options": [
+      "Newton's Second Law",
+      "Newton's Third Law",
+      "Law of Gravitation",
+      "Newton's First Law"
+    ],
+    "correctAnswer": "Newton's First Law"
   },
   {
     "id": 11,
-    "subject": "Chemistry",
-    "question": "What is the chemical formula of water?",
-    "options": ["H2O", "CO2", "O2", "HCl"],
-    "correctAnswer": "H2O",
-    "marks": 1
+    "subject": "biology",
+    "question": "What is the speed of light in vacuum?",
+    "options": [
+      "3 × 10^8 m/s",
+      "3 × 10^6 m/s",
+      "3 × 10^4 m/s",
+      "3 × 10^2 m/s"
+    ],
+    "correctAnswer": "3 × 10^8 m/s"
   },
   {
     "id": 12,
-    "subject": "Chemistry",
-    "question": "What is the atomic number of carbon?",
-    "options": ["12", "14", "6", "8"],
-    "correctAnswer": "6",
-    "marks": 1
-  },
-  {
-    "id": 13,
-    "subject": "Chemistry",
-    "question": "Which gas is known as laughing gas?",
-    "options": ["Carbon dioxide", "Nitrous oxide", "Sulfur dioxide", "Oxygen"],
-    "correctAnswer": "Nitrous oxide",
-    "marks": 1
-  },
-  {
-    "id": 14,
-    "subject": "Chemistry",
-    "question": "Which element has the highest electronegativity?",
-    "options": ["Oxygen", "Fluorine", "Chlorine", "Nitrogen"],
-    "correctAnswer": "Fluorine",
-    "marks": 1
-  },
-  {
-    "id": 15,
-    "subject": "Chemistry",
-    "question": "What is the pH of pure water?",
-    "options": ["7", "5", "9", "6"],
-    "correctAnswer": "7",
-    "marks": 1
-  },
-  {
-    "id": 16,
-    "subject": "Chemistry",
-    "question": "Which metal is the most reactive?",
-    "options": ["Gold", "Iron", "Potassium", "Silver"],
-    "correctAnswer": "Potassium",
-    "marks": 1
-  },
-  {
-    "id": 17,
-    "subject": "Chemistry",
-    "question": "Which type of chemical bond is found in NaCl?",
-    "options": ["Covalent", "Ionic", "Metallic", "Hydrogen"],
-    "correctAnswer": "Ionic",
-    "marks": 1
-  },
-  {
-    "id": 18,
-    "subject": "Chemistry",
-    "question": "Which gas is used in balloons to make them float?",
-    "options": ["Helium", "Oxygen", "Nitrogen", "Hydrogen"],
-    "correctAnswer": "Helium",
-    "marks": 1
-  },
-  {
-    "id": 19,
-    "subject": "Chemistry",
-    "question": "What is the common name for sodium bicarbonate?",
-    "options": ["Baking powder", "Baking soda", "Salt", "Sugar"],
-    "correctAnswer": "Baking soda",
-    "marks": 1
-  },
-  {
-    "id": 20,
-    "subject": "Chemistry",
-    "question": "Which acid is found in lemons?",
-    "options": ["Acetic acid", "Citric acid", "Sulfuric acid", "Nitric acid"],
-    "correctAnswer": "Citric acid",
-    "marks": 1
-  },
-  {
-    "id": 21,
-    "subject": "Mathematics",
-    "question": "What is the derivative of x²?",
-    "options": ["x", "2x", "x^2", "1"],
-    "correctAnswer": "2x",
-    "marks": 1
-  },
-  {
-    "id": 22,
-    "subject": "Mathematics",
-    "question": "What is the value of π (pi) to two decimal places?",
-    "options": ["3.12", "3.14", "3.16", "3.18"],
-    "correctAnswer": "3.14",
-    "marks": 1
-  },
-  {
-    "id": 23,
-    "subject": "Mathematics",
-    "question": "What is the sum of the interior angles of a hexagon?",
-    "options": ["360°", "540°", "720°", "900°"],
-    "correctAnswer": "720°",
-    "marks": 1
-  },
-  {
-    "id": 24,
-    "subject": "Mathematics",
-    "question": "What is the square root of 144?",
-    "options": ["10", "12", "14", "16"],
-    "correctAnswer": "12",
-    "marks": 1
-  },
-  {
-    "id": 25,
-    "subject": "Mathematics",
-    "question": "If a triangle has angles 90°, 30°, and 60°, what type of triangle is it?",
-    "options": ["Equilateral", "Right-angled", "Obtuse", "Acute"],
-    "correctAnswer": "Right-angled",
-    "marks": 1
-  },
-  {
-    "id": 26,
-    "subject": "Mathematics",
-    "question": "What is the formula for the area of a circle?",
-    "options": ["πr", "2πr", "πr²", "πd²"],
-    "correctAnswer": "πr²",
-    "marks": 1
-  },
-  {
-    "id": 27,
-    "subject": "Mathematics",
-    "question": "What is 25% of 200?",
-    "options": ["25", "50", "75", "100"],
-    "correctAnswer": "50",
-    "marks": 1
-  },
-  {
-    "id": 28,
-    "subject": "Mathematics",
-    "question": "What is the logarithm of 1000 to the base 10?",
-    "options": ["1", "2", "3", "4"],
-    "correctAnswer": "3",
-    "marks": 1
-  },
-  {
-    "id": 29,
-    "subject": "Mathematics",
-    "question": "What is the value of sin(0°)?",
-    "options": ["0", "1", "√2/2", "√3/2"],
-    "correctAnswer": "0",
-    "marks": 1
-  },
-  {
-    "id": 30,
-    "subject": "Mathematics",
-    "question": "What is the area of a triangle with base 5 and height 4?",
-    "options": ["10", "20", "25", "30"],
-    "correctAnswer": "10",
-    "marks": 1
+    "subject": "biology",
+    "question": "What is the speed of light in vacuum?",
+    "options": [
+      "3 × 10^8 m/s",
+      "3 × 10^6 m/s",
+      "3 × 10^4 m/s",
+      "3 × 10^2 m/s"
+    ],
+    "correctAnswer": "3 × 10^8 m/s"
   }
 ]

@@ -1,228 +1,149 @@
-import React, { useState, useEffect } from "react";
-import "./exam.css"
+import { useState, useEffect } from "react";
+import io from "socket.io-client";
+import "./exam.css";
+
+const socket = io("http://localhost:3002");
+
 export const ExamInterface = () => {
   const [questions, setQuestions] = useState([]);
-  const [selectedSubject, setSelectedSubject] = useState("Physics");
+  const [subjects, setSubjects] = useState([]);
+  const [selectedSubject, setSelectedSubject] = useState("");
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState({});
   const [attempted, setAttempted] = useState([]);
   const [score, setScore] = useState(0);
   const [submitted, setSubmitted] = useState(false);
-  const [timer, setTimer] = useState(60 * 60); // Assuming 1-hour timer for the exam
-  const [markedForReview, setMarkedForReview] = useState([]);
+  const [timer, setTimer] = useState(() => {
+    const savedTimer = localStorage.getItem("examTimer");
+    return savedTimer ? parseInt(savedTimer, 10) : 60 * 60;
+  });
 
-  // Save exam state to localStorage
   useEffect(() => {
-    localStorage.setItem("examState", JSON.stringify({
-      selectedSubject,
-      currentQuestionIndex,
-      selectedOption,
-      attempted,
-      score,
-      markedForReview
-    }));
-  }, [selectedSubject, currentQuestionIndex, selectedOption, attempted, score, markedForReview]);
-
-  // Load exam state from localStorage
-  useEffect(() => {
-    const savedState = localStorage.getItem("examState");
-    if (savedState) {
-      const state = JSON.parse(savedState);
-      setSelectedSubject(state.selectedSubject);
-      setCurrentQuestionIndex(state.currentQuestionIndex);
-      setSelectedOption(state.selectedOption);
-      setAttempted(state.attempted);
-      setScore(state.score);
-      setMarkedForReview(state.markedForReview);
-    }
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch("http://localhost:3002/api/questions");
+        const data = await response.json();
+        console.log("Fetched Questions:", data);
+        if (data.length > 0) {
+          setQuestions(data);
+          const uniqueSubjects = [...new Set(data.map(q => q.subject))];
+          setSubjects(uniqueSubjects);
+          setSelectedSubject(uniqueSubjects[0]);
+        } else {
+          console.error("No questions received!");
+        }
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+      }
+    };
+    fetchQuestions();
   }, []);
 
-  // Timer countdown logic
   useEffect(() => {
     const interval = setInterval(() => {
-      if (timer > 0) {
-        setTimer((prevTimer) => prevTimer - 1);
-      } else {
-        clearInterval(interval);
-        setSubmitted(true); // Automatically submit when time runs out
-        calculateScore();
-      }
+      setTimer((prevTimer) => {
+        if (prevTimer > 0) {
+          const newTime = prevTimer - 1;
+          localStorage.setItem("examTimer", newTime);
+          return newTime;
+        } else {
+          clearInterval(interval);
+          setSubmitted(true);
+          calculateScore();
+          return 0;
+        }
+      });
     }, 1000);
-
     return () => clearInterval(interval);
-  }, [timer]);
-
-  // Disable right-click, F5 refresh, and page unload
-  useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      event.preventDefault();
-      event.returnValue = '';
-    };
-
-    const handleKeyDown = (event) => {
-      if (event.key === 'F5') {
-        event.preventDefault();
-      }
-    };
-
-    const handleRightClick = (event) => {
-      event.preventDefault();
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('contextmenu', handleRightClick);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('contextmenu', handleRightClick);
-    };
   }, []);
 
-  // Fetching questions and setting them
-  useEffect(() => {
-    fetch("/questions.json")
-      .then((response) => response.json())
-      .then((data) => setQuestions(data))
-      .catch((error) => console.error("Error fetching questions:", error));
-  }, []);
-
-  const filteredQuestions = questions.filter((q) => q.subject === selectedSubject);
+  const filteredQuestions = questions.filter((q) => q.subject.toLowerCase() === selectedSubject.toLowerCase());
 
   const handleOptionChange = (option) => {
     setSelectedOption((prev) => ({
       ...prev,
       [`${selectedSubject}-${currentQuestionIndex}`]: option,
     }));
-
     if (!attempted.includes(`${selectedSubject}-${currentQuestionIndex}`)) {
       setAttempted([...attempted, `${selectedSubject}-${currentQuestionIndex}`]);
     }
   };
 
-  const handleNext = () => {
-    if (currentQuestionIndex < filteredQuestions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
-  };
-
-  const handlePrev = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-    }
-  };
-
-  const handleSaveAndNext = () => {
-    if (!attempted.includes(`${selectedSubject}-${currentQuestionIndex}`)) {
-      setAttempted([...attempted, `${selectedSubject}-${currentQuestionIndex}`]);
-    }
-    handleNext();
-  };
-
-  const handleSaveAndMarkForReview = () => {
-    if (!attempted.includes(`${selectedSubject}-${currentQuestionIndex}`)) {
-      setAttempted([...attempted, `${selectedSubject}-${currentQuestionIndex}`]);
-    }
-    setMarkedForReview((prev) => [...prev, `${selectedSubject}-${currentQuestionIndex}`]);
+  const handleSubmit = () => {
+    calculateScore();
+    setSubmitted(true);
   };
 
   const calculateScore = () => {
     let totalScore = 0;
     filteredQuestions.forEach((question, index) => {
-      const selectedAnswer = selectedOption[`${selectedSubject}-${index}`];
-      if (selectedAnswer === question.correctAnswer) {
-        totalScore += question.marks;
+      if (selectedOption[`${selectedSubject}-${index}`] === question.correctAnswer) {
+        totalScore += question.marks || 1;
       }
     });
     setScore(totalScore);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    calculateScore();
-    setSubmitted(true);
-    setSelectedOption({});
-    setAttempted([]);
-    setMarkedForReview([]);
-    setCurrentQuestionIndex(0);
-    setScore(0);
-  };
-
-  if (filteredQuestions.length === 0) return <h2>Loading questions...</h2>;
+  if (!filteredQuestions.length) return <h2>Loading questions...</h2>;
 
   const currentQuestion = filteredQuestions[currentQuestionIndex];
 
   return (
     <div className="exam-container">
-
       <div className="exam-topbar">
         <div className="subject-buttons">
-          {["Physics", "Chemistry", "Mathematics"].map((subject) => (
+          {subjects.map((subject) => (
             <button
               key={subject}
-              className={`subject-btn ${selectedSubject === subject ? "active" : ""}`}
-              onClick={() => setSelectedSubject(subject)}
+              className={selectedSubject === subject ? "active" : ""}
+              onClick={() => {
+                setSelectedSubject(subject);
+                setCurrentQuestionIndex(0);
+              }}
             >
               {subject}
             </button>
           ))}
         </div>
-        <div className="timer">
-          Time Remaining: {Math.floor(timer / 60)}:{timer % 60}
-        </div>
+        <div className="timer">Time Left: {Math.floor(timer / 60)}:{timer % 60}</div>
       </div>
 
-      <div className="exam-content">
-        {!submitted ? (
-          <>
-            <div className="question-box">
-              <h2>
-                Question {currentQuestionIndex + 1} ({selectedSubject}): {currentQuestion.marks} Marks
-              </h2>
-              <p>{currentQuestion.question}</p>
-              <div className="options">
-                {currentQuestion.options.map((option, index) => (
-                  <label key={index}>
-                    <input
-                      type="radio"
-                      name={`question-${currentQuestionIndex}`}
-                      value={option}
-                      checked={selectedOption[`${selectedSubject}-${currentQuestionIndex}`] === option}
-                      onChange={() => handleOptionChange(option)}
-                    />
-                    {option}
-                  </label>
-                ))}
-              </div>
-            </div>
+      {!submitted ? (
+        currentQuestion ? (
+          <div className="question-box">
+            <h2>Question {currentQuestionIndex + 1}: {currentQuestion.marks || 1} Marks</h2>
+            <p>{currentQuestion.question}</p>
 
-            <div className="navigation">
-              <button className="nav-btn" onClick={handlePrev} disabled={currentQuestionIndex === 0}>BACK</button>
-              <button className="save-and-next-btn" onClick={handleSaveAndNext}>SAVE & NEXT</button>
-              <button className="save-and-mark-btn" onClick={handleSaveAndMarkForReview}>SAVE & MARK FOR REVIEW</button>
-              <button className="submit-btn" onClick={handleSubmit}>SUBMIT</button>
-            </div>
-          </>
-        ) : (
-          <div className="score-display">
-            <h3>Your Final Score: {score} / {filteredQuestions.reduce((acc, q) => acc + q.marks, 0)}</h3>
-            <p>Thank you for taking the exam. You have been logged out.</p>
+            {Array.isArray(currentQuestion.options) && currentQuestion.options.length > 0 ? (
+              currentQuestion.options.map((option, index) => (
+                <label key={index}>
+                  <input
+                    type="radio"
+                    name={`question-${currentQuestionIndex}`}
+                    checked={selectedOption[`${selectedSubject}-${currentQuestionIndex}`] === option}
+                    onChange={() => handleOptionChange(option)}
+                  />
+                  {option}
+                </label>
+              ))
+            ) : (
+              <p>No options available</p>
+            )}
           </div>
-        )}
-      </div>
+        ) : (
+          <p>Loading current question...</p>
+        )
+      ) : (
+        <h3>Your Final Score: {score}</h3>
+      )}
 
-      <div className="question-palette">
-        {filteredQuestions.map((_, index) => (
-          <button
-            key={index}
-            className={`question-num ${attempted.includes(`${selectedSubject}-${index}`) ? "attempted" : ""} ${markedForReview.includes(`${selectedSubject}-${index}`) ? "marked-for-review" : ""}`}
-            onClick={() => setCurrentQuestionIndex(index)}
-          >
-            {index + 1}
-          </button>
-        ))}
-      </div>
+      <button onClick={() => setCurrentQuestionIndex((prev) => Math.max(0, prev - 1))} disabled={currentQuestionIndex === 0}>
+        Prev
+      </button>
+      <button onClick={() => setCurrentQuestionIndex((prev) => Math.min(filteredQuestions.length - 1, prev + 1))} disabled={currentQuestionIndex >= filteredQuestions.length - 1}>
+        Next
+      </button>
+      <button onClick={handleSubmit}>Submit</button>
     </div>
   );
 };

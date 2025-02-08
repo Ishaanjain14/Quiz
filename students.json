@@ -1,0 +1,12 @@
+[
+  {
+    "Name": "Alice Doe",
+    "Roll Number": 101,
+    "Email": "alice@example.com"
+  },
+  {
+    "Name": "Bob Smith",
+    "Roll Number": 102,
+    "Email": "bob@example.com"
+  }
+]

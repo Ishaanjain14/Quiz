@@ -1,33 +1,52 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./login.css";
 
 export const LoginPage = () => {
-  const navigate = useNavigate(); // Hook to navigate programmatically
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
-    e.preventDefault(); // Prevent form submission
-    navigate("/instructions"); // Navigate to instructions page
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const response = await fetch("http://localhost:3002/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem("student", JSON.stringify(data.student)); // Store student details
+        navigate("/instructions");
+      } else {
+        setError(data.message || "Login failed.");
+      }
+    } catch (err) {
+      setError("Server error. Please try again.");
+    }
   };
 
   return (
     <div className="login-container">
-
-      {/* Login Form */}
       <div className="login-box">
-        <h2>Login (Demo)</h2>
+        <h2>Student Login</h2>
         <form onSubmit={handleLogin}>
           <div>
-            <label>Username</label>
-            <input type="text" required />
+            <label>Email</label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           </div>
           <div>
-            <label>Password</label>
-            <input type="password" required />
+            <label>Roll Number (Password)</label>
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </div>
           <button type="submit" className="login-btn">LOGIN</button>
         </form>
-        <p className="login-message">Click Login To Proceed!</p>
+        {error && <p className="error-message">{error}</p>}
       </div>
     </div>
   );
