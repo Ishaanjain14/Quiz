@@ -60,29 +60,56 @@ export const ExamInterface = () => {
   const filteredQuestions = questions.filter((q) => q.subject.toLowerCase() === selectedSubject.toLowerCase());
 
   const handleOptionChange = (option) => {
+    const key = currentQuestion.id; // Use question ID as key
+    // Ensure consistent key format
+
     setSelectedOption((prev) => ({
       ...prev,
-      [`${selectedSubject}-${currentQuestionIndex}`]: option,
+      [key]: option,
     }));
-    if (!attempted.includes(`${selectedSubject}-${currentQuestionIndex}`)) {
-      setAttempted([...attempted, `${selectedSubject}-${currentQuestionIndex}`]);
+
+    if (!attempted.includes(key)) {
+      setAttempted([...attempted, key]);
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     calculateScore();
     setSubmitted(true);
+
+    const responsePayload = {
+      studentName: "Test Student", // Replace with actual student name
+      responses: selectedOption, // Now stores responses with question ID as key
+    };
+
+
+    try {
+      const response = await fetch("http://localhost:3002/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(responsePayload),
+      });
+      console.log(response);
+      const data = await response.json();
+      console.log("Server Response:", data);
+      setScore(data.score); // Update UI with correct final score
+    } catch (error) {
+      console.error("Error submitting exam:", error);
+    }
   };
 
   const calculateScore = () => {
     let totalScore = 0;
-    filteredQuestions.forEach((question, index) => {
-      if (selectedOption[`${selectedSubject}-${index}`] === question.correctAnswer) {
+    questions.forEach((question) => {
+      const key = question.id; // Use ID instead of index
+      if (selectedOption[key] === question.correctAnswer) {
         totalScore += question.marks || 1;
       }
     });
     setScore(totalScore);
   };
+
+
 
   if (!filteredQuestions.length) return <h2>Loading questions...</h2>;
 
@@ -119,10 +146,11 @@ export const ExamInterface = () => {
                 <label key={index}>
                   <input
                     type="radio"
-                    name={`question-${currentQuestionIndex}`}
-                    checked={selectedOption[`${selectedSubject}-${currentQuestionIndex}`] === option}
+                    name={`question-${currentQuestion.id}`}
+                    checked={selectedOption[currentQuestion.id] === option}
                     onChange={() => handleOptionChange(option)}
                   />
+
                   {option}
                 </label>
               ))

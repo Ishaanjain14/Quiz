@@ -3,144 +3,112 @@
     "id": 1,
     "subject": "physics",
     "question": "What is the SI unit of force?",
-    "options": [
-      "Newton",
-      "Joule",
-      "Watt",
-      "Pascal"
-    ],
+    "options": ["Newton", "Joule", "Watt", "Pascal"],
     "correctAnswer": "Newton"
   },
   {
     "id": 2,
     "subject": "physics",
     "question": "Which law states that an object at rest stays at rest unless acted upon by an external force?",
-    "options": [
-      "Newton's Second Law",
-      "Newton's Third Law",
-      "Law of Gravitation",
-      "Newton's First Law"
-    ],
+    "options": ["Newton's Second Law", "Newton's Third Law", "Law of Gravitation", "Newton's First Law"],
     "correctAnswer": "Newton's First Law"
   },
   {
     "id": 3,
     "subject": "physics",
     "question": "What is the speed of light in vacuum?",
-    "options": [
-      "3 × 10^8 m/s",
-      "3 × 10^6 m/s",
-      "3 × 10^4 m/s",
-      "3 × 10^2 m/s"
-    ],
+    "options": ["3 × 10^8 m/s", "3 × 10^6 m/s", "3 × 10^4 m/s", "3 × 10^2 m/s"],
     "correctAnswer": "3 × 10^8 m/s"
   },
   {
     "id": 4,
     "subject": "physics",
-    "question": "What is the speed of light in vacuum?",
-    "options": [
-      "3 × 10^8 m/s",
-      "3 × 10^6 m/s",
-      "3 × 10^4 m/s",
-      "3 × 10^2 m/s"
-    ],
-    "correctAnswer": "3 × 10^8 m/s"
+    "question": "Who discovered the law of universal gravitation?",
+    "options": ["Newton", "Einstein", "Galileo", "Kepler"],
+    "correctAnswer": "Newton"
   },
   {
     "id": 5,
     "subject": "chemistry",
-    "question": "What is the SI unit of force?",
-    "options": [
-      "Newton",
-      "Joule",
-      "Watt",
-      "Pascal"
-    ],
-    "correctAnswer": "Newton"
+    "question": "What is the chemical symbol for gold?",
+    "options": ["Au", "Ag", "Pb", "Hg"],
+    "correctAnswer": "Au"
   },
   {
     "id": 6,
     "subject": "chemistry",
-    "question": "Which law states that an object at rest stays at rest unless acted upon by an external force?",
-    "options": [
-      "Newton's Second Law",
-      "Newton's Third Law",
-      "Law of Gravitation",
-      "Newton's First Law"
-    ],
-    "correctAnswer": "Newton's First Law"
+    "question": "Which gas is essential for combustion?",
+    "options": ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"],
+    "correctAnswer": "Oxygen"
   },
   {
     "id": 7,
     "subject": "chemistry",
-    "question": "What is the speed of light in vacuum?",
-    "options": [
-      "3 × 10^8 m/s",
-      "3 × 10^6 m/s",
-      "3 × 10^4 m/s",
-      "3 × 10^2 m/s"
-    ],
-    "correctAnswer": "3 × 10^8 m/s"
+    "question": "What is the pH of pure water?",
+    "options": ["7", "5", "9", "3"],
+    "correctAnswer": "7"
   },
   {
     "id": 8,
     "subject": "chemistry",
-    "question": "What is the speed of light in vacuum?",
-    "options": [
-      "3 × 10^8 m/s",
-      "3 × 10^6 m/s",
-      "3 × 10^4 m/s",
-      "3 × 10^2 m/s"
-    ],
-    "correctAnswer": "3 × 10^8 m/s"
+    "question": "What is the main component of natural gas?",
+    "options": ["Methane", "Ethane", "Propane", "Butane"],
+    "correctAnswer": "Methane"
   },
   {
     "id": 9,
-    "subject": "Mathematics",
-    "question": "What is the SI unit of force?",
-    "options": [
-      "Newton",
-      "Joule",
-      "Watt",
-      "Pascal"
-    ],
-    "correctAnswer": "Newton"
+    "subject": "mathematics",
+    "question": "What is the value of π (pi) approximately?",
+    "options": ["3.14", "2.71", "1.61", "4.13"],
+    "correctAnswer": "3.14"
   },
   {
     "id": 10,
-    "subject": "Mathematics",
-    "question": "Which law states that an object at rest stays at rest unless acted upon by an external force?",
-    "options": [
-      "Newton's Second Law",
-      "Newton's Third Law",
-      "Law of Gravitation",
-      "Newton's First Law"
-    ],
-    "correctAnswer": "Newton's First Law"
+    "subject": "mathematics",
+    "question": "What is 12 × 8?",
+    "options": ["96", "82", "108", "112"],
+    "correctAnswer": "96"
   },
   {
     "id": 11,
-    "subject": "biology",
-    "question": "What is the speed of light in vacuum?",
-    "options": [
-      "3 × 10^8 m/s",
-      "3 × 10^6 m/s",
-      "3 × 10^4 m/s",
-      "3 × 10^2 m/s"
-    ],
-    "correctAnswer": "3 × 10^8 m/s"
+    "subject": "mathematics",
+    "question": "What is the square root of 144?",
+    "options": ["12", "14", "16", "18"],
+    "correctAnswer": "12"
   },
   {
     "id": 12,
+    "subject": "mathematics",
+    "question": "What is the formula for the area of a circle?",
+    "options": ["πr²", "2πr", "πd", "r²"],
+    "correctAnswer": "πr²"
+  },
+  {
+    "id": 13,
     "subject": "biology",
-    "question": "What is the speed of light in vacuum?",
-    "options": [
-      "3 × 10^8 m/s",
-      "3 × 10^6 m/s",
-      "3 × 10^4 m/s",
-      "3 × 10^2 m/s"
-    ],
-    "correctAnswer": "3 × 10^8 m/s"
+    "question": "What is the powerhouse of the cell?",
+    "options": ["Mitochondria", "Nucleus", "Ribosome", "Chloroplast"],
+    "correctAnswer": "Mitochondria"
+  },
+  {
+    "id": 14,
+    "subject": "biology",
+    "question": "Which organ is responsible for pumping blood?",
+    "options": ["Heart", "Lungs", "Liver", "Kidney"],
+    "correctAnswer": "Heart"
+  },
+  {
+    "id": 15,
+    "subject": "biology",
+    "question": "What is the process by which plants make their own food?",
+    "options": ["Photosynthesis", "Respiration", "Digestion", "Fermentation"],
+    "correctAnswer": "Photosynthesis"
+  },
+  {
+    "id": 16,
+    "subject": "biology",
+    "question": "Which vitamin is produced in human skin upon sunlight exposure?",
+    "options": ["Vitamin D", "Vitamin A", "Vitamin C", "Vitamin K"],
+    "correctAnswer": "Vitamin D"
   }
 ]
