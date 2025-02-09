@@ -1,8 +1,8 @@
 const path = require("path");
 const express = require("express");
 const multer = require("multer");
+const xlsx = require("xlsx");
 const fs = require("fs");
-const XLSX = require("xlsx");
 const cors = require("cors");
 const http = require("http");
 const socketIo = require("socket.io");
@@ -33,26 +33,43 @@ const upload = multer({ dest: UPLOADS_DIR });
 /* ===========================
        Utility Functions
 =========================== */
-const readJSONFile = (filePath, defaultValue = []) => {
-  if (fs.existsSync(filePath)) {
-    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+
+// Read JSON file safely
+const readJSONFile = (filePath) => {
+  try {
+    if (!fs.existsSync(filePath)) return [];
+    const data = fs.readFileSync(filePath, "utf-8");
+    return JSON.parse(data);
+  } catch (error) {
+    console.error(`Error reading JSON file (${filePath}):`, error);
+    return [];
   }
-  return defaultValue;
 };
 
+// Write JSON file safely
 const writeJSONFile = (filePath, data) => {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 };
 
-// Load student data
-const getStudents = () => readJSONFile(STUDENTS_FILE);
+// Read Excel file safely
+function readExcelFile(filename) {
+  try {
+    if (!fs.existsSync(filename)) return [];
+    const workbook = xlsx.readFile(filename);
+    const sheetName = workbook.SheetNames[0];
+    return xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+  } catch (error) {
+    console.error("Error reading Excel file:", error);
+    return [];
+  }
+}
 
 /* ===========================
        Authentication
 =========================== */
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  const students = getStudents();
+  const students = readJSONFile(STUDENTS_FILE);
 
   const student = students.find((s) => s.Email === email && String(s["Roll Number"]) === password);
   if (student) {
@@ -68,9 +85,9 @@ app.post("/upload", upload.single("file"), (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
   try {
-    const workbook = XLSX.readFile(req.file.path);
+    const workbook = xlsx.readFile(req.file.path);
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const rawData = XLSX.utils.sheet_to_json(sheet);
+    const rawData = xlsx.utils.sheet_to_json(sheet);
 
     const formattedData = rawData.map((row, index) => ({
       id: index + 1,
@@ -92,7 +109,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
 });
 
 app.get("/api/questions", (req, res) => {
-  const questions = readJSONFile(QUESTIONS_FILE, []);
+  const questions = readJSONFile(QUESTIONS_FILE);
   if (!questions.length) return res.status(404).json({ error: "No questions available" });
 
   res.json(questions);
@@ -103,44 +120,50 @@ app.get("/api/questions", (req, res) => {
 =========================== */
 app.post("/submit", (req, res) => {
   const { studentName, responses } = req.body;
-  if (!studentName || !responses) return res.status(400).json({ error: "Missing student name or responses" });
+  if (!studentName || !responses) {
+    return res.status(400).json({ error: "Missing student name or responses" });
+  }
+
+  console.log("Received responses:", responses);
 
   const questions = readJSONFile(QUESTIONS_FILE, []);
-  let score = 0;
+  let totalScore = 0;
 
-  questions.forEach((question, index) => {
-    if (responses[index] === question.correctAnswer) {
-      score += question.marks || 1;
+  questions.forEach((question) => {
+    const key = question.id; // Use question ID as key
+    const correctAnswer = question.correctAnswer.trim().toLowerCase(); // Normalize answer
+
+    if (responses[key] && responses[key].trim().toLowerCase() === correctAnswer) {
+      totalScore += question.marks || 1;
     }
   });
 
-  saveResult(studentName, score);
-  io.emit("result-updated", { studentName, score });
+  console.log("Final Score:", totalScore, "Responses:", responses);
 
-  res.json({ message: "Exam submitted successfully!", score });
+  saveResult(studentName, totalScore);
+  io.emit("result-updated", { studentName, totalScore });
+
+  res.json({ message: "Exam submitted successfully!", score: totalScore });
 });
 
 /* ===========================
       Result Management
 =========================== */
 const saveResult = (studentName, score) => {
-  let results = readJSONFile(RESULTS_FILE, []);
+  let results = readExcelFile(RESULTS_FILE);
 
   results.push({ Student: studentName, Score: score });
 
-  const workbook = XLSX.utils.book_new();
-  const sheet = XLSX.utils.json_to_sheet(results);
-  XLSX.utils.book_append_sheet(workbook, sheet, "Results");
-  XLSX.writeFile(workbook, RESULTS_FILE);
+  const workbook = xlsx.utils.book_new();
+  const sheet = xlsx.utils.json_to_sheet(results);
+  xlsx.utils.book_append_sheet(workbook, sheet, "Results");
+  xlsx.writeFile(workbook, RESULTS_FILE);
 };
 
 app.get("/result", (req, res) => {
   if (!fs.existsSync(RESULTS_FILE)) return res.status(404).json({ error: "No results available" });
 
-  const workbook = XLSX.readFile(RESULTS_FILE);
-  const sheet = workbook.Sheets[workbook.SheetNames[0]];
-  const results = XLSX.utils.sheet_to_json(sheet);
-
+  const results = readExcelFile(RESULTS_FILE);
   res.json(results);
 });
 
@@ -151,9 +174,9 @@ app.post("/upload-students", upload.single("file"), (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
   try {
-    const workbook = XLSX.readFile(req.file.path);
+    const workbook = xlsx.readFile(req.file.path);
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const studentsData = XLSX.utils.sheet_to_json(sheet);
+    const studentsData = xlsx.utils.sheet_to_json(sheet);
 
     writeJSONFile(STUDENTS_FILE, studentsData);
     io.emit("students-updated", { message: "Student list updated!" });
@@ -166,7 +189,7 @@ app.post("/upload-students", upload.single("file"), (req, res) => {
 });
 
 app.get("/api/students", (req, res) => {
-  const students = readJSONFile(STUDENTS_FILE, []);
+  const students = readJSONFile(STUDENTS_FILE);
   if (!students.length) return res.status(404).json({ error: "No student data available" });
 
   res.json(students);
