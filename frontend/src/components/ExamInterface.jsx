@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import "./exam.css";
 
 const socket = io("http://localhost:3002");
 
 export const ExamInterface = () => {
+  
   const [questions, setQuestions] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState("");
@@ -17,6 +18,8 @@ export const ExamInterface = () => {
     const savedTimer = localStorage.getItem("examTimer");
     return savedTimer ? parseInt(savedTimer, 10) : 60 * 60;
   });
+
+  const timerRef = useRef(null); // Store interval reference
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -40,28 +43,51 @@ export const ExamInterface = () => {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const savedTimer = localStorage.getItem("examTimer");
+    const isSubmitted = localStorage.getItem("examSubmitted") === "true"; // ✅ Prevent retake
+
+    if (isSubmitted) {
+      setSubmitted(true);
+      setTimer(0); // ✅ Disable timer
+      return;
+    }
+
+    setTimer(savedTimer ? parseInt(savedTimer, 10) : 60 * 60);
+
+    timerRef.current = setInterval(() => {
       setTimer((prevTimer) => {
         if (prevTimer > 0) {
           const newTime = prevTimer - 1;
           localStorage.setItem("examTimer", newTime);
           return newTime;
         } else {
-          clearInterval(interval);
-          setSubmitted(true);
-          calculateScore();
+          clearInterval(timerRef.current);
+          alert("Time is up! Please submit your exam.");
           return 0;
         }
       });
     }, 1000);
-    return () => clearInterval(interval);
+
+    return () => clearInterval(timerRef.current);
   }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      if (!submitted) {
+        event.preventDefault();
+        event.returnValue = "Are you sure you want to leave? Your progress will be lost.";
+      }
+    };
+    
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [submitted]);
 
   const filteredQuestions = questions.filter((q) => q.subject.toLowerCase() === selectedSubject.toLowerCase());
 
   const handleOptionChange = (option) => {
-    const key = currentQuestion.id; // Use question ID as key
-    // Ensure consistent key format
+    const key = currentQuestion.id;
 
     setSelectedOption((prev) => ({
       ...prev,
@@ -74,14 +100,18 @@ export const ExamInterface = () => {
   };
 
   const handleSubmit = async () => {
-    calculateScore();
+    if (submitted) return; // ✅ Prevent multiple submissions
+
     setSubmitted(true);
+    localStorage.setItem("examSubmitted", "true"); // ✅ Store submission status
+    clearInterval(timerRef.current); // ✅ Stop the timer
+
+    calculateScore();
 
     const responsePayload = {
       studentName: "Test Student", // Replace with actual student name
-      responses: selectedOption, // Now stores responses with question ID as key
+      responses: selectedOption,
     };
-
 
     try {
       const response = await fetch("http://localhost:3002/submit", {
@@ -92,7 +122,7 @@ export const ExamInterface = () => {
       console.log(response);
       const data = await response.json();
       console.log("Server Response:", data);
-      setScore(data.score); // Update UI with correct final score
+      setScore(data.score);
     } catch (error) {
       console.error("Error submitting exam:", error);
     }
@@ -101,7 +131,7 @@ export const ExamInterface = () => {
   const calculateScore = () => {
     let totalScore = 0;
     questions.forEach((question) => {
-      const key = question.id; // Use ID instead of index
+      const key = question.id;
       if (selectedOption[key] === question.correctAnswer) {
         totalScore += question.marks || 1;
       }
@@ -109,12 +139,10 @@ export const ExamInterface = () => {
     setScore(totalScore);
   };
 
-
-
   if (!filteredQuestions.length) return <h2>Loading questions...</h2>;
 
   const currentQuestion = filteredQuestions[currentQuestionIndex];
-
+  
   return (
     <div className="exam-container">
       <div className="exam-topbar">
@@ -150,7 +178,6 @@ export const ExamInterface = () => {
                     checked={selectedOption[currentQuestion.id] === option}
                     onChange={() => handleOptionChange(option)}
                   />
-
                   {option}
                 </label>
               ))
@@ -171,7 +198,7 @@ export const ExamInterface = () => {
       <button onClick={() => setCurrentQuestionIndex((prev) => Math.min(filteredQuestions.length - 1, prev + 1))} disabled={currentQuestionIndex >= filteredQuestions.length - 1}>
         Next
       </button>
-      <button onClick={handleSubmit}>Submit</button>
+      <button onClick={handleSubmit} disabled={submitted}>Submit</button>
     </div>
   );
 };
