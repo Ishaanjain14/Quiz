@@ -14,55 +14,40 @@ const io = socketIo(server);
 const PORT = process.env.PORT || 3002;
 const UPLOADS_DIR = "uploads";
 const QUESTIONS_FILE = path.join(__dirname, "frontend", "public", "questions.json");
-const RESULTS_FILE = path.join(__dirname, "results.xlsx");
+const RESULTS_FILE = path.join(__dirname, "results.json");
 const STUDENTS_FILE = path.join(__dirname, "students.json");
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "http://yourfrontend.com" })); // Restrict CORS in production
 app.use(express.static(path.join(__dirname, "frontend", "dist")));
 
-// Ensure uploads directory exists
-if (!fs.existsSync(UPLOADS_DIR)) {
-  fs.mkdirSync(UPLOADS_DIR);
-}
+if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR);
 
-// File upload configuration
 const upload = multer({ dest: UPLOADS_DIR });
 
 /* ===========================
        Utility Functions
 =========================== */
-
-// Read JSON file safely
 const readJSONFile = (filePath) => {
   try {
     if (!fs.existsSync(filePath)) return [];
-    const data = fs.readFileSync(filePath, "utf-8");
-    return JSON.parse(data);
+    return JSON.parse(fs.readFileSync(filePath, "utf-8"));
   } catch (error) {
     console.error(`Error reading JSON file (${filePath}):`, error);
     return [];
   }
 };
 
-// Write JSON file safely
 const writeJSONFile = (filePath, data) => {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 };
 
-// Read Excel file safely
-function readExcelFile(filename) {
-  try {
-    if (!fs.existsSync(filename)) return [];
-    const workbook = xlsx.readFile(filename);
-    const sheetName = workbook.SheetNames[0];
-    return xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-  } catch (error) {
-    console.error("Error reading Excel file:", error);
-    return [];
-  }
-}
+const saveResultToJSON = (studentName, rollNumber, score) => {
+  let results = readJSONFile(RESULTS_FILE);
+  results.push({ Student: studentName, RollNumber: rollNumber, Score: score });
+  writeJSONFile(RESULTS_FILE, results);
+};
 
 /* ===========================
        Authentication
@@ -71,11 +56,12 @@ app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const students = readJSONFile(STUDENTS_FILE);
 
-  const student = students.find((s) => s.Email === email && String(s["Roll Number"]) === password);
-  if (student) {
-    return res.json({ success: true, student });
-  }
-  return res.status(401).json({ success: false, message: "Invalid credentials" });
+  const student = students.find(
+    (s) => s.Email === email && String(s["Roll Number"]) === password
+  );
+
+  if (student) return res.json({ success: true, student });
+  res.status(401).json({ success: false, message: "Invalid credentials" });
 });
 
 /* ===========================
@@ -83,12 +69,12 @@ app.post("/login", (req, res) => {
 =========================== */
 app.post("/upload", upload.single("file"), (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
-
+  
   try {
     const workbook = xlsx.readFile(req.file.path);
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const rawData = xlsx.utils.sheet_to_json(sheet);
-
+    
     const formattedData = rawData.map((row, index) => ({
       id: index + 1,
       subject: row.subject,
@@ -100,8 +86,8 @@ app.post("/upload", upload.single("file"), (req, res) => {
 
     writeJSONFile(QUESTIONS_FILE, formattedData);
     io.emit("data-updated", { message: "Questions updated!" });
-
-    fs.unlink(req.file.path, () => {}); // Non-blocking delete
+    
+    fs.unlink(req.file.path, (err) => { if (err) console.error("File delete error:", err); });
     res.json({ message: "File uploaded and questions saved successfully." });
   } catch (error) {
     res.status(500).json({ error: "Error processing file", details: error.message });
@@ -111,7 +97,6 @@ app.post("/upload", upload.single("file"), (req, res) => {
 app.get("/api/questions", (req, res) => {
   const questions = readJSONFile(QUESTIONS_FILE);
   if (!questions.length) return res.status(404).json({ error: "No questions available" });
-
   res.json(questions);
 });
 
@@ -119,52 +104,21 @@ app.get("/api/questions", (req, res) => {
         Exam Submission
 =========================== */
 app.post("/submit", (req, res) => {
-  const { studentName, responses } = req.body;
-  if (!studentName || !responses) {
-    return res.status(400).json({ error: "Missing student name or responses" });
-  }
-
-  console.log("Received responses:", responses);
-
-  const questions = readJSONFile(QUESTIONS_FILE, []);
+  const { studentName, rollNumber, responses } = req.body;
+  if (!studentName || !rollNumber || !responses) return res.status(400).json({ error: "Missing details" });
+  
+  const questions = readJSONFile(QUESTIONS_FILE);
   let totalScore = 0;
 
-  questions.forEach((question) => {
-    const key = question.id; // Use question ID as key
-    const correctAnswer = question.correctAnswer.trim().toLowerCase(); // Normalize answer
-
-    if (responses[key] && responses[key].trim().toLowerCase() === correctAnswer) {
-      totalScore += question.marks || 1;
+  questions.forEach((q) => {
+    if (responses[q.id] && responses[q.id].trim().toLowerCase() === q.correctAnswer.trim().toLowerCase()) {
+      totalScore += q.marks || 1;
     }
   });
 
-  console.log("Final Score:", totalScore, "Responses:", responses);
-
-  saveResult(studentName, totalScore);
-  io.emit("result-updated", { studentName, totalScore });
-
+  saveResultToJSON(studentName, rollNumber, totalScore);
+  io.emit("result-updated", { studentName, rollNumber, totalScore });
   res.json({ message: "Exam submitted successfully!", score: totalScore });
-});
-
-/* ===========================
-      Result Management
-=========================== */
-const saveResult = (studentName, score) => {
-  let results = readExcelFile(RESULTS_FILE);
-
-  results.push({ Student: studentName, Score: score });
-
-  const workbook = xlsx.utils.book_new();
-  const sheet = xlsx.utils.json_to_sheet(results);
-  xlsx.utils.book_append_sheet(workbook, sheet, "Results");
-  xlsx.writeFile(workbook, RESULTS_FILE);
-};
-
-app.get("/result", (req, res) => {
-  if (!fs.existsSync(RESULTS_FILE)) return res.status(404).json({ error: "No results available" });
-
-  const results = readExcelFile(RESULTS_FILE);
-  res.json(results);
 });
 
 /* ===========================
@@ -176,11 +130,8 @@ app.post("/upload-students", upload.single("file"), (req, res) => {
   try {
     const workbook = xlsx.readFile(req.file.path);
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const studentsData = xlsx.utils.sheet_to_json(sheet);
-
-    writeJSONFile(STUDENTS_FILE, studentsData);
+    writeJSONFile(STUDENTS_FILE, xlsx.utils.sheet_to_json(sheet));
     io.emit("students-updated", { message: "Student list updated!" });
-
     fs.unlink(req.file.path, () => {});
     res.json({ message: "Student list uploaded successfully!" });
   } catch (error) {
@@ -191,7 +142,6 @@ app.post("/upload-students", upload.single("file"), (req, res) => {
 app.get("/api/students", (req, res) => {
   const students = readJSONFile(STUDENTS_FILE);
   if (!students.length) return res.status(404).json({ error: "No student data available" });
-
   res.json(students);
 });
 
@@ -202,10 +152,6 @@ io.on("connection", (socket) => {
   console.log("New client connected");
   socket.on("disconnect", () => console.log("Client disconnected"));
 });
-
-/* ===========================
-        Serve React App
-=========================== */
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });

@@ -5,7 +5,6 @@ import "./exam.css";
 const socket = io("http://localhost:3002");
 
 export const ExamInterface = () => {
-  
   const [questions, setQuestions] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState("");
@@ -14,19 +13,27 @@ export const ExamInterface = () => {
   const [attempted, setAttempted] = useState([]);
   const [score, setScore] = useState(0);
   const [submitted, setSubmitted] = useState(false);
-  const [timer, setTimer] = useState(() => {
-    const savedTimer = localStorage.getItem("examTimer");
-    return savedTimer ? parseInt(savedTimer, 10) : 60 * 60;
-  });
+  const [timer, setTimer] = useState(60 * 60);
 
-  const timerRef = useRef(null); // Store interval reference
+  const [student, setStudent] = useState(null);
+  const timerRef = useRef(null);
+
+  // ✅ Fetch student details from sessionStorage
+  useEffect(() => {
+    const storedStudent = sessionStorage.getItem("student");
+    if (storedStudent) {
+      setStudent(JSON.parse(storedStudent));
+    } else {
+      alert("Student details missing! Redirecting to login.");
+      window.location.href = "/login";
+    }
+  }, []);
 
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
         const response = await fetch("http://localhost:3002/api/questions");
         const data = await response.json();
-        console.log("Fetched Questions:", data);
         if (data.length > 0) {
           setQuestions(data);
           const uniqueSubjects = [...new Set(data.map(q => q.subject))];
@@ -43,12 +50,14 @@ export const ExamInterface = () => {
   }, []);
 
   useEffect(() => {
-    const savedTimer = localStorage.getItem("examTimer");
-    const isSubmitted = localStorage.getItem("examSubmitted") === "true"; // ✅ Prevent retake
+    if (!student) return;
+
+    const savedTimer = sessionStorage.getItem(`examTimer_${student["Roll Number"]}`);
+    const isSubmitted = sessionStorage.getItem(`examSubmitted_${student["Roll Number"]}`) === "true";
 
     if (isSubmitted) {
       setSubmitted(true);
-      setTimer(0); // ✅ Disable timer
+      setTimer(0);
       return;
     }
 
@@ -58,7 +67,7 @@ export const ExamInterface = () => {
       setTimer((prevTimer) => {
         if (prevTimer > 0) {
           const newTime = prevTimer - 1;
-          localStorage.setItem("examTimer", newTime);
+          sessionStorage.setItem(`examTimer_${student["Roll Number"]}`, newTime);
           return newTime;
         } else {
           clearInterval(timerRef.current);
@@ -69,7 +78,7 @@ export const ExamInterface = () => {
     }, 1000);
 
     return () => clearInterval(timerRef.current);
-  }, []);
+  }, [student]);
 
   useEffect(() => {
     const handleBeforeUnload = (event) => {
@@ -78,16 +87,17 @@ export const ExamInterface = () => {
         event.returnValue = "Are you sure you want to leave? Your progress will be lost.";
       }
     };
-    
+
     window.addEventListener("beforeunload", handleBeforeUnload);
-    
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [submitted]);
 
   const filteredQuestions = questions.filter((q) => q.subject.toLowerCase() === selectedSubject.toLowerCase());
 
   const handleOptionChange = (option) => {
-    const key = currentQuestion.id;
+    if (!filteredQuestions[currentQuestionIndex]) return;
+
+    const key = filteredQuestions[currentQuestionIndex].id;
 
     setSelectedOption((prev) => ({
       ...prev,
@@ -100,16 +110,17 @@ export const ExamInterface = () => {
   };
 
   const handleSubmit = async () => {
-    if (submitted) return; // ✅ Prevent multiple submissions
+    if (submitted || !student) return;
 
     setSubmitted(true);
-    localStorage.setItem("examSubmitted", "true"); // ✅ Store submission status
-    clearInterval(timerRef.current); // ✅ Stop the timer
+    sessionStorage.setItem(`examSubmitted_${student["Roll Number"]}`, "true");
+    clearInterval(timerRef.current);
 
     calculateScore();
 
     const responsePayload = {
-      studentName: "Test Student", // Replace with actual student name
+      studentName: student.Name,
+      rollNumber: student["Roll Number"],
       responses: selectedOption,
     };
 
@@ -119,9 +130,8 @@ export const ExamInterface = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(responsePayload),
       });
-      console.log(response);
+
       const data = await response.json();
-      console.log("Server Response:", data);
       setScore(data.score);
     } catch (error) {
       console.error("Error submitting exam:", error);
@@ -142,10 +152,18 @@ export const ExamInterface = () => {
   if (!filteredQuestions.length) return <h2>Loading questions...</h2>;
 
   const currentQuestion = filteredQuestions[currentQuestionIndex];
-  
+
   return (
     <div className="exam-container">
       <div className="exam-topbar">
+        <div className="student-info">
+          {student && (
+            <h3>
+              {student.Name} | Roll No: {student["Roll Number"]}
+            </h3>
+          )}
+        </div>
+
         <div className="subject-buttons">
           {subjects.map((subject) => (
             <button
@@ -160,6 +178,7 @@ export const ExamInterface = () => {
             </button>
           ))}
         </div>
+        
         <div className="timer">Time Left: {Math.floor(timer / 60)}:{timer % 60}</div>
       </div>
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const LoginPage = () => {
@@ -10,18 +10,20 @@ export const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-
+  
     try {
       const response = await fetch("http://localhost:3002/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
+  
       const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem("student", JSON.stringify(data.student)); // Store student details
+      console.log("Login Response:", data); // 🔍 Debugging
+  
+      if (response.ok && data.student) {
+        console.log("Storing Student Data:", data.student);
+        sessionStorage.setItem("student", JSON.stringify(data.student));
         navigate("/instructions");
       } else {
         setError(data.message || "Login failed.");
@@ -30,6 +32,7 @@ export const LoginPage = () => {
       setError("Server error. Please try again.");
     }
   };
+  
 
   return (
     <div className="login-container">
