@@ -1,8 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import io from "socket.io-client";
 import "./exam.css";
-
-const socket = io("http://localhost:3002");
 
 export const ExamInterface = () => {
   const [questions, setQuestions] = useState([]);

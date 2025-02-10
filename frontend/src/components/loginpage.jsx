@@ -29,7 +29,7 @@ export const LoginPage = () => {
         setError(data.message || "Login failed.");
       }
     } catch (err) {
-      setError("Server error. Please try again.");
+      setError("Server error. Please try again.",err);
     }
   };
   
