@@ -110,5 +110,117 @@
     "question": "Which vitamin is produced in human skin upon sunlight exposure?",
     "options": ["Vitamin D", "Vitamin A", "Vitamin C", "Vitamin K"],
     "correctAnswer": "Vitamin D"
+  },
+  {
+    "id": 17,
+    "subject": "physics",
+    "question": "What is the acceleration due to gravity on Earth?",
+    "options": ["9.8 m/s²", "8.9 m/s²", "10.2 m/s²", "7.5 m/s²"],
+    "correctAnswer": "9.8 m/s²"
+  },
+  {
+    "id": 18,
+    "subject": "physics",
+    "question": "Which subatomic particle has a negative charge?",
+    "options": ["Electron", "Proton", "Neutron", "Photon"],
+    "correctAnswer": "Electron"
+  },
+  {
+    "id": 19,
+    "subject": "physics",
+    "question": "Which of the following is a scalar quantity?",
+    "options": ["Speed", "Velocity", "Force", "Acceleration"],
+    "correctAnswer": "Speed"
+  },
+  {
+    "id": 20,
+    "subject": "physics",
+    "question": "What type of mirror is used in car side mirrors?",
+    "options": ["Convex", "Concave", "Plane", "Parabolic"],
+    "correctAnswer": "Convex"
+  },
+  {
+    "id": 21,
+    "subject": "chemistry",
+    "question": "What is the chemical formula of water?",
+    "options": ["H₂O", "CO₂", "O₂", "CH₄"],
+    "correctAnswer": "H₂O"
+  },
+  {
+    "id": 22,
+    "subject": "chemistry",
+    "question": "Which metal is the best conductor of electricity?",
+    "options": ["Silver", "Copper", "Gold", "Aluminum"],
+    "correctAnswer": "Silver"
+  },
+  {
+    "id": 23,
+    "subject": "chemistry",
+    "question": "Which acid is found in lemon juice?",
+    "options": ["Citric acid", "Acetic acid", "Sulfuric acid", "Hydrochloric acid"],
+    "correctAnswer": "Citric acid"
+  },
+  {
+    "id": 24,
+    "subject": "chemistry",
+    "question": "Which element is common in all organic compounds?",
+    "options": ["Carbon", "Oxygen", "Hydrogen", "Nitrogen"],
+    "correctAnswer": "Carbon"
+  },
+  {
+    "id": 25,
+    "subject": "mathematics",
+    "question": "What is the sum of angles in a triangle?",
+    "options": ["180°", "360°", "90°", "270°"],
+    "correctAnswer": "180°"
+  },
+  {
+    "id": 26,
+    "subject": "mathematics",
+    "question": "What is the cube of 3?",
+    "options": ["27", "9", "12", "18"],
+    "correctAnswer": "27"
+  },
+  {
+    "id": 27,
+    "subject": "mathematics",
+    "question": "If a rectangle has a length of 10 and a width of 5, what is its area?",
+    "options": ["50", "25", "15", "100"],
+    "correctAnswer": "50"
+  },
+  {
+    "id": 28,
+    "subject": "mathematics",
+    "question": "What is the least prime number?",
+    "options": ["2", "3", "5", "1"],
+    "correctAnswer": "2"
+  },
+  {
+    "id": 29,
+    "subject": "biology",
+    "question": "Which part of the plant conducts photosynthesis?",
+    "options": ["Leaves", "Roots", "Stem", "Flowers"],
+    "correctAnswer": "Leaves"
+  },
+  {
+    "id": 30,
+    "subject": "biology",
+    "question": "Which blood cells help in clotting?",
+    "options": ["Platelets", "Red blood cells", "White blood cells", "Plasma"],
+    "correctAnswer": "Platelets"
+  },
+  {
+    "id": 31,
+    "subject": "biology",
+    "question": "Which organ in the human body filters blood?",
+    "options": ["Kidney", "Liver", "Heart", "Lungs"],
+    "correctAnswer": "Kidney"
+  },
+  {
+    "id": 32,
+    "subject": "biology",
+    "question": "Which gas do plants release during photosynthesis?",
+    "options": ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"],
+    "correctAnswer": "Oxygen"
   }
 ]
