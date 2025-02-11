@@ -148,7 +148,7 @@ button:hover:not(:disabled) {
   padding: 10px;
   border: 2px solid var(--light-gray);
   border-radius: 5px;
-  background: white;
+  background-color: white;
   cursor: pointer;
   transition: all 0.2s ease;
 }

@@ -23,5 +23,15 @@
     "Student": "Alice Doe",
     "RollNumber": 101,
     "Score": 8
+  },
+  {
+    "Student": "Alice Doe",
+    "RollNumber": 101,
+    "Score": 1
+  },
+  {
+    "Student": "Bob Smith",
+    "RollNumber": 102,
+    "Score": 9
   }
 ]
