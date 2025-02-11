@@ -151,6 +151,7 @@ export const ExamInterface = () => {
 
   return (
     <div className="exam-container">
+      <div className="exam-left">
       <div className="exam-topbar">
         <div className="student-info">
           {student && (
@@ -214,6 +215,7 @@ export const ExamInterface = () => {
         Next
       </button>
       <button onClick={handleSubmit} disabled={submitted}>Submit</button>
+      </div>
       <div className="exam-right">
         <h3>Questions</h3>
         <div className="question-nav">
