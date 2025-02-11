@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { InstructionsPage } from "./components/Instructions";
 import { ExamInterface } from "./components/ExamInterface";
@@ -6,6 +7,20 @@ import { UploadExcel } from "./components/UploadExcel";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 function App() {
+  useEffect(() => {
+    const enableFullscreen = async () => {
+      if (!document.fullscreenElement) {
+        try {
+          await document.documentElement.requestFullscreen();
+        } catch (err) {
+          console.error("Error enabling fullscreen:", err);
+        }
+      }
+    };
+
+    enableFullscreen();
+  }, []);
+
   return (
     <Router>
       <Routes>
