@@ -14,8 +14,7 @@ export const ExamInterface = () => {
 
   const [student, setStudent] = useState(null);
   const timerRef = useRef(null);
-
-  // ✅ Fetch student details from sessionStorage
+  
   useEffect(() => {
     const storedStudent = sessionStorage.getItem("student");
     if (storedStudent) {
@@ -215,6 +214,21 @@ export const ExamInterface = () => {
         Next
       </button>
       <button onClick={handleSubmit} disabled={submitted}>Submit</button>
+      <div className="exam-right">
+        <h3>Questions</h3>
+        <div className="question-nav">
+          {filteredQuestions.map((q, index) => (
+            <button
+              key={q.id}
+              className={`question-btn ${currentQuestionIndex === index ? "active" : ""} ${attempted.includes(q.id) ? "attempted" : ""}`}
+              onClick={() => setCurrentQuestionIndex(index)}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
+    
   );
 };
