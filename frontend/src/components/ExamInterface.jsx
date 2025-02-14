@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import Result from "./Result";
 import "./exam.css";
 
 export const ExamInterface = () => {
@@ -9,15 +10,17 @@ export const ExamInterface = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState({});
   const [attempted, setAttempted] = useState([]);
-  const [score, setScore] = useState(0);
   const [submitted, setSubmitted] = useState(false);
-  const [timer, setTimer] = useState(60 * 60);
+  const [timer, setTimer] = useState(0);
   const [testSchedule, setTestSchedule] = useState(null);
+  const [showResult, setShowResult] = useState(false);
+  const [scoreData, setScoreData] = useState(null);
   const navigate = useNavigate();
 
   const [student, setStudent] = useState(null);
   const timerRef = useRef(null);
 
+  // Student session management
   useEffect(() => {
     const storedStudent = sessionStorage.getItem("student");
     if (storedStudent) {
@@ -28,6 +31,7 @@ export const ExamInterface = () => {
     }
   }, []);
 
+  // Fetch test schedule
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
@@ -42,6 +46,7 @@ export const ExamInterface = () => {
     fetchSchedule();
   }, []);
 
+  // Fetch questions
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
@@ -53,8 +58,6 @@ export const ExamInterface = () => {
           const uniqueSubjects = [...new Set(data.map(q => q.subject))];
           setSubjects(uniqueSubjects);
           setSelectedSubject(uniqueSubjects[0]);
-        } else {
-          console.error("No questions received!");
         }
       } catch (error) {
         console.error("Error fetching questions:", error);
@@ -63,6 +66,7 @@ export const ExamInterface = () => {
     fetchQuestions();
   }, []);
 
+  // Timer and schedule management
   useEffect(() => {
     if (!student || !testSchedule) return;
 
@@ -101,6 +105,7 @@ export const ExamInterface = () => {
     return () => clearInterval(timerRef.current);
   }, [student, testSchedule, navigate]);
 
+  // Prevent window close during test
   useEffect(() => {
     const handleBeforeUnload = (event) => {
       if (!submitted) {
@@ -112,9 +117,6 @@ export const ExamInterface = () => {
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [submitted]);
-
-  const filteredQuestions = questions.filter((q) => q.subject.toLowerCase() === selectedSubject.toLowerCase());
-
   const handleOptionChange = (option) => {
     if (!filteredQuestions[currentQuestionIndex]) return;
 
@@ -129,7 +131,7 @@ export const ExamInterface = () => {
       setAttempted([...attempted, key]);
     }
   };
-
+  // Submit handler
   const handleSubmit = useCallback(async () => {
     if (submitted || !student) return;
 
@@ -137,33 +139,81 @@ export const ExamInterface = () => {
     sessionStorage.setItem(`examSubmitted_${student["Roll Number"]}`, "true");
     clearInterval(timerRef.current);
 
+    // Calculate scores
     let totalScore = 0;
+    const correctAnswers = {};
+    const sectionDetails = {};
+
     questions.forEach((question) => {
       const key = question.id;
-      if (selectedOption[key] === question.correctAnswer) {
-        totalScore += question.marks || 1;
+      const isCorrect = selectedOption[key] === question.correctAnswer;
+      const marks = question.marks || 1;
+      
+      if (isCorrect) {
+        totalScore += marks;
+        correctAnswers[key] = true;
+      }
+
+      // Section breakdown
+      if (!sectionDetails[question.subject]) {
+        sectionDetails[question.subject] = {
+          attempted: 0,
+          correct: 0,
+          total: 0
+        };
+      }
+
+      sectionDetails[question.subject].total++;
+      if (selectedOption[key] !== undefined) {
+        sectionDetails[question.subject].attempted++;
+        if (isCorrect) sectionDetails[question.subject].correct++;
       }
     });
-    setScore(totalScore);
 
-    const responsePayload = {
-      studentName: student.Name,
-      rollNumber: student["Roll Number"],
-      responses: selectedOption,
-      score: totalScore
-    };
+    // Prepare result data
+    const totalPossible = questions.reduce((sum, q) => sum + (q.marks || 1), 0);
+    const sections = Object.entries(sectionDetails).map(([name, data]) => ({
+      name,
+      ...data
+    }));
 
+    setScoreData({
+      examName: "Final Examination",
+      totalScore: Math.round((totalScore / totalPossible) * 100),
+      correctAnswers: Object.keys(correctAnswers).length,
+      totalQuestions: questions.length,
+      sections,
+      percentile: 75 // Should come from server
+    });
+
+    setShowResult(true);
+
+    // Submit to backend
     try {
-      const response = await fetch("http://localhost:3002/submit", {
+      await fetch("http://localhost:3002/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(responsePayload),
+        body: JSON.stringify({
+          studentName: student.Name,
+          rollNumber: student["Roll Number"],
+          responses: selectedOption,
+          score: totalScore,
+          sectionDetails
+        }),
       });
-      if (!response.ok) throw new Error("Failed to submit exam");
     } catch (error) {
-      console.error("Error submitting exam:", error);
+      console.error("Submission failed:", error);
     }
   }, [submitted, student, questions, selectedOption]);
+
+  const handleReviewAnswers = () => {
+    // Implement review functionality
+    console.log("Reviewing answers...");
+  };
+
+  const filteredQuestions = questions.filter(q => 
+    q.subject.toLowerCase() === selectedSubject.toLowerCase()
+  );
 
   const formatTime = (seconds) => {
     const hrs = Math.floor(seconds / 3600);
@@ -172,91 +222,120 @@ export const ExamInterface = () => {
     return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  if (!filteredQuestions.length) return <h2>Loading questions...</h2>;
-
-  const currentQuestion = filteredQuestions[currentQuestionIndex];
+  if (!questions.length) return <div className="loading">Loading questions...</div>;
 
   return (
     <div className="exam-container">
-      <div className="exam-left">
-        <div className="exam-topbar">
-          <div className="student-info">
-            {student && (
-              <h3>
-                {student.Name} | Roll No: {student["Roll Number"]}
-              </h3>
+      {showResult ? (
+        <Result 
+          scoreData={scoreData}
+          onReviewAnswers={handleReviewAnswers}
+        />
+      ) : (
+        <>
+          <div className="exam-left">
+            <div className="exam-topbar">
+              <div className="student-info">
+                {student && (
+                  <h2>
+                    {student.Name} (Roll No: {student["Roll Number"]})
+                  </h2>
+                )}
+              </div>
+
+              <div className="subject-selector">
+                {subjects.map(subject => (
+                  <button
+                    key={subject}
+                    className={`subject-btn ${selectedSubject === subject ? "active" : ""}`}
+                    onClick={() => {
+                      setSelectedSubject(subject);
+                      setCurrentQuestionIndex(0);
+                    }}
+                  >
+                    {subject}
+                  </button>
+                ))}
+              </div>
+
+              <div className="timer">
+                <span>⏳ Time Remaining:</span>
+                <strong>{formatTime(timer)}</strong>
+              </div>
+            </div>
+
+            {filteredQuestions[currentQuestionIndex] && (
+              <div className="question-container">
+                <div className="question-header">
+                  <h3>
+                    Question {currentQuestionIndex + 1} of {filteredQuestions.length}
+                    <span>({filteredQuestions[currentQuestionIndex].marks || 1} marks)</span>
+                  </h3>
+                </div>
+
+                <div className="question-content">
+                  <p>{filteredQuestions[currentQuestionIndex].question}</p>
+                  
+                  <div className="options-grid">
+                    {filteredQuestions[currentQuestionIndex].options?.map((option, index) => (
+                      <label key={index} className="option-label">
+                        <input
+                          type="radio"
+                          name={`question-${filteredQuestions[currentQuestionIndex].id}`}
+                          checked={selectedOption[filteredQuestions[currentQuestionIndex].id] === option}
+                          onChange={() => handleOptionChange(option)}
+                        />
+                        <span className="option-text">{option}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="navigation-buttons">
+                  <button
+                    onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
+                    disabled={currentQuestionIndex === 0}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={() => setCurrentQuestionIndex(prev => Math.min(filteredQuestions.length - 1, prev + 1))}
+                    disabled={currentQuestionIndex >= filteredQuestions.length - 1}
+                  >
+                    Next
+                  </button>
+                  <button 
+                    className="submit-btn"
+                    onClick={handleSubmit}
+                    disabled={submitted}
+                  >
+                    {submitted ? "Submitting..." : "Submit Exam"}
+                  </button>
+                </div>
+              </div>
             )}
           </div>
 
-          <div className="subject-buttons">
-            {subjects.map((subject) => (
-              <button
-                key={subject}
-                className={selectedSubject === subject ? "active" : ""}
-                onClick={() => {
-                  setSelectedSubject(subject);
-                  setCurrentQuestionIndex(0);
-                }}
-              >
-                {subject}
-              </button>
-            ))}
-          </div>
-          
-          <div className="timer">Time Left: {formatTime(timer)}</div>
-        </div>
-
-        {!submitted ? (
-          currentQuestion ? (
-            <div className="question-box">
-              <h2>Question {currentQuestionIndex + 1}: {currentQuestion.marks || 1} Marks</h2>
-              <p>{currentQuestion.question}</p>
-
-              {Array.isArray(currentQuestion.options) && currentQuestion.options.length > 0 ? (
-                currentQuestion.options.map((option, index) => (
-                  <label key={index}>
-                    <input
-                      type="radio"
-                      name={`question-${currentQuestion.id}`}
-                      checked={selectedOption[currentQuestion.id] === option}
-                      onChange={() => handleOptionChange(option)}
-                    />
-                    {option}
-                  </label>
-                ))
-              ) : (
-                <p>No options available</p>
-              )}
+          <div className="exam-right">
+            <div className="question-progress">
+              <h3>Question Navigator</h3>
+              <div className="question-grid">
+                {filteredQuestions.map((q, index) => (
+                  <button
+                    key={q.id}
+                    className={`question-btn 
+                      ${currentQuestionIndex === index ? "active" : ""} 
+                      ${attempted.includes(q.id) ? "attempted" : ""}`}
+                    onClick={() => setCurrentQuestionIndex(index)}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+              </div>
             </div>
-          ) : (
-            <p>Loading current question...</p>
-          )
-        ) : (
-          <h3>Your Final Score: {score}</h3>
-        )}
-
-        <button onClick={() => setCurrentQuestionIndex((prev) => Math.max(0, prev - 1))} disabled={currentQuestionIndex === 0}>
-          Prev
-        </button>
-        <button onClick={() => setCurrentQuestionIndex((prev) => Math.min(filteredQuestions.length - 1, prev + 1))} disabled={currentQuestionIndex >= filteredQuestions.length - 1}>
-          Next
-        </button>
-        <button onClick={handleSubmit} disabled={submitted}>Submit</button>
-      </div>
-      <div className="exam-right">
-        <h3>Questions</h3>
-        <div className="question-nav">
-          {filteredQuestions.map((q, index) => (
-            <button
-              key={q.id}
-              className={`question-btn ${currentQuestionIndex === index ? "active" : ""} ${attempted.includes(q.id) ? "attempted" : ""}`}
-              onClick={() => setCurrentQuestionIndex(index)}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

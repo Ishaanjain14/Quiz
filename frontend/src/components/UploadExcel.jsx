@@ -13,7 +13,8 @@ export const UploadExcel = () => {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [scheduleMessage, setScheduleMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loadingQuestions, setLoadingQuestions] = useState(false);
+  const [loadingStudents, setLoadingStudents] = useState(false);
   const [isTestOver, setIsTestOver] = useState(false);
 
   // Handle file selection
@@ -24,10 +25,21 @@ export const UploadExcel = () => {
     }
   };
 
+  // Validate file type
+  const validateFile = (file, allowedExtensions) => {
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    return allowedExtensions.includes(`.${fileExtension}`);
+  };
+
   // Generic function for uploading files
-  const handleUpload = async (file, endpoint, setFeedback) => {
+  const handleUpload = async (file, endpoint, setFeedback, setLoading) => {
     if (!file) {
       setFeedback("Please select a file first.");
+      return;
+    }
+
+    if (!validateFile(file, [".xlsx", ".csv"])) {
+      setFeedback("Invalid file type. Please upload .xlsx or .csv files.");
       return;
     }
 
@@ -43,16 +55,29 @@ export const UploadExcel = () => {
       const data = await response.json();
       setFeedback(data.message || "Upload successful!");
     } catch (error) {
-      setFeedback("Upload failed. Please try again.");
+      console.error("Upload failed:", error);
+      setFeedback("Upload failed. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  // Validate schedule
+  const validateSchedule = () => {
+    if (!testDate || !startTime || !endTime) {
+      return "Please fill in all schedule fields.";
+    }
+    if (new Date(`${testDate}T${endTime}`) <= new Date(`${testDate}T${startTime}`)) {
+      return "End time must be after start time.";
+    }
+    return null;
+  };
+
   // Set test schedule
   const handleSetSchedule = async () => {
-    if (!testDate || !startTime || !endTime) {
-      setScheduleMessage("Please fill in all schedule fields.");
+    const validationError = validateSchedule();
+    if (validationError) {
+      setScheduleMessage(validationError);
       return;
     }
 
@@ -66,6 +91,7 @@ export const UploadExcel = () => {
       setScheduleMessage(data.message || "Schedule set successfully!");
       socket.emit("schedule-updated");
     } catch (error) {
+      console.error("Schedule setting failed:", error);
       setScheduleMessage("Failed to set schedule. Please try again.");
     }
   };
@@ -99,20 +125,21 @@ export const UploadExcel = () => {
       a.click();
       a.remove();
     } catch (error) {
+      console.error("Download failed:", error);
       alert("Failed to download template. Please try again.");
     }
   };
 
   return (
     <div className="upload-container">
-      <h1>Upload Excel Files</h1>
+      <h1>ADMIN PORTAL</h1>
 
       {/* Upload Questions */}
       <section className="upload-section">
         <h2>Upload Questions File</h2>
-        <input type="file" onChange={(e) => handleFileChange(e, setFile)} disabled={loading} />
-        <button onClick={() => handleUpload(file, "upload", setMessage)} disabled={loading}>
-          {loading ? "Uploading..." : "Upload Questions"}
+        <input type="file" onChange={(e) => handleFileChange(e, setFile)} disabled={loadingQuestions} />
+        <button onClick={() => handleUpload(file, "upload", setMessage, setLoadingQuestions)} disabled={loadingQuestions}>
+          {loadingQuestions ? "Uploading..." : "Upload Questions"}
         </button>
         <p className="feedback-message">{message}</p>
       </section>
@@ -120,21 +147,36 @@ export const UploadExcel = () => {
       {/* Upload Student List */}
       <section className="upload-section">
         <h2>Upload Student List</h2>
-        <input type="file" onChange={(e) => handleFileChange(e, setStudentFile)} disabled={loading} />
-        <button onClick={() => handleUpload(studentFile, "upload-students", setStudentMessage)} disabled={loading}>
-          {loading ? "Uploading..." : "Upload Students"}
+        <input type="file" onChange={(e) => handleFileChange(e, setStudentFile)} disabled={loadingStudents} />
+        <button onClick={() => handleUpload(studentFile, "upload-students", setStudentMessage, setLoadingStudents)} disabled={loadingStudents}>
+          {loadingStudents ? "Uploading..." : "Upload Students"}
         </button>
         <p className="feedback-message">{studentMessage}</p>
       </section>
 
       {/* Set Test Schedule */}
-      <section className="schedule-section">
-        <h2>Set Test Schedule</h2>
-        <input type="date" value={testDate} onChange={(e) => setTestDate(e.target.value)} />
-        <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
-        <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
-        <button onClick={handleSetSchedule}>Set Schedule</button>
-        <p className="feedback-message">{scheduleMessage}</p>
+      <section className="upload-card">
+        <h2>Test Schedule</h2>
+        <div className="schedule-grid">
+          <div className="input-group">
+            <label>Test Date:</label>
+            <input type="date" value={testDate} onChange={(e) => setTestDate(e.target.value)} />
+          </div>
+          <div className="input-group">
+            <label>Start Time:</label>
+            <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
+          </div>
+          <div className="input-group">
+            <label>End Time:</label>
+            <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
+          </div>
+        </div>
+        <button className="schedule-button" onClick={handleSetSchedule}>
+          🗓 Set Schedule
+        </button>
+        <p className={`feedback-message ${scheduleMessage.includes('success') ? 'success' : 'error'}`}>
+          {scheduleMessage}
+        </p>
       </section>
 
       {/* Download Templates */}
@@ -147,10 +189,7 @@ export const UploadExcel = () => {
       {/* Download Results */}
       <section className="download-section">
         <h2>Download Test Results</h2>
-        <button
-          onClick={() => handleDownload("results.json")}
-          disabled={!isTestOver}
-        >
+        <button onClick={() => handleDownload("results.json")} disabled={!isTestOver}>
           {isTestOver ? "Download Results" : "Test Not Completed Yet"}
         </button>
         {!isTestOver && <p className="feedback-message">You can download results only after the test is over.</p>}

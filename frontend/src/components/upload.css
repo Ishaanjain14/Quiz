@@ -1,74 +1,265 @@
-/* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  
+:root {
+  --primary: #4361ee;
+  --primary-dark: #3a0ca3;
+  --secondary: #4cc9f0;
+  --success: #06d6a0;
+  --error: #ef476f;
+  --background: #f8f9fa;
+  --text: #2b2d42;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --radius: 12px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-  
-  /* Heading */
-  h1, h2 {
-    color: #333;
-    font-size: 22px;
-    margin-bottom: 15px;
-  }
-  
-  /* Input Field */
-  input[type="file"] {
-    display: block;
-    margin: 15px auto;
-    padding: 10px;
-    border: 2px dashed #007bff;
-    border-radius: 5px;
-    width: 100%;
-    background-color: #f9f9f9;
-    cursor: pointer;
-    text-align: center;
-  }
-  
-  /* Buttons */
-  button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    margin: 10px;
-    transition: background 0.3s ease;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  
-  /* Upload Progress */
-  p {
-    font-size: 16px;
-    color: #555;
-  }
-  
-  
-  .notification {
-    background-color: #28a745;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    margin-top: 10px;
-    font-weight: bold;
-  }
-  
+.upload-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--background);
+  min-height: 100vh;
+}
 
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+  background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding: 1rem;
+  border-radius: var(--radius);
+}
 
+.upload-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.upload-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.upload-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  color: var(--text);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+}
+
+.file-input-wrapper {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.file-input-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  border: 2px dashed #e2e8f0;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--transition);
+  background: rgba(255, 255, 255, 0.5);
+  min-height: 100px;
+  text-align: center;
+}
+
+.file-input-label:hover {
+  border-color: var(--primary);
+  background: rgba(67, 97, 238, 0.05);
+}
+
+.file-input-label.dragover {
+  border-color: var(--success);
+  background: rgba(6, 214, 160, 0.05);
+}
+
+.upload-button {
+  width: 100%;
+  padding: 1rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.upload-button:hover {
+  background: var(--primary-dark);
+  transform: scale(1.02);
+}
+
+.upload-button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.schedule-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.time-inputs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.input-group {
+  position: relative;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+}
+
+.feedback-message {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.feedback-message.success {
+  background: rgba(6, 214, 160, 0.1);
+  color: #065f46;
+  border: 1px solid var(--success);
+}
+
+.feedback-message.error {
+  background: rgba(239, 71, 111, 0.1);
+  color: #881337;
+  border: 1px solid var(--error);
+}
+
+.download-section {
+  margin-top: 2rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.download-button {
+  background: var(--secondary);
+  color: var(--text);
+  padding: 1rem;
+  border-radius: var(--radius);
+  text-align: center;
+  transition: var(--transition);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.download-button:hover {
+  background: #3aa9c9;
+  transform: translateY(-2px);
+}
+
+.progress-bar {
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--primary);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@media (max-width: 768px) {
+  .upload-container {
+    padding: 1rem;
+  }
+  
+  .upload-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .time-inputs {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Glassmorphism effect for modern look */
+.upload-card {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 255, 255, 0.3) 100%
+  );
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Enhanced file input drag/drop zone */
+.drag-drop-zone {
+  border: 2px dashed var(--primary);
+  background: rgba(67, 97, 238, 0.05);
+}

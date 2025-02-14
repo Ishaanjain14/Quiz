@@ -1,0 +1,251 @@
+:root {
+  --primary-color: #4361ee;
+  --success-color: #06d6a0;
+  --error-color: #ef476f;
+  --background-color: #f8f9fa;
+  --text-color: #2b2d42;
+  --border-color: #e2e8f0;
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.result-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: var(--card-shadow);
+  animation: fadeIn 0.5s ease-in;
+}
+
+.result-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.completion-check {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 1.5rem;
+}
+
+.check-circle {
+  fill: none;
+  stroke: var(--success-color);
+  stroke-width: 5;
+  stroke-dasharray: 283;
+  stroke-dashoffset: 283;
+  animation: drawCircle 1s ease-out forwards;
+}
+
+.check-mark {
+  fill: none;
+  stroke: var(--success-color);
+  stroke-width: 5;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: drawCheck 0.5s ease-out 0.5s forwards;
+}
+
+.score-summary {
+  background: var(--background-color);
+  padding: 2rem;
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+}
+
+.total-score {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.score-circle {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin-left:10px;
+}
+
+.score-progress {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-right:10px;
+}
+
+.score-track {
+  fill: none;
+  stroke: var(--border-color);
+  stroke-width: 8;
+}
+
+.score-bar {
+  fill: none;
+  stroke: var(--primary-color);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 0.5s ease-out;
+}
+
+.score-details {
+  flex: 1;
+  margin-left:100px;
+}
+
+.score-details h3 {
+  color: var(--text-color);
+  margin-bottom: 1rem;
+}
+
+.score-details p {
+  color: #64748b;
+  
+}
+
+.toggle-details {
+  width: 100%;
+  padding: 1rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.toggle-details:hover {
+  background: #3a0ca3;
+}
+
+.section-breakdown {
+  margin-top: 2rem;
+}
+
+.sections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.section-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.8rem;
+  box-shadow: var(--card-shadow);
+}
+
+.section-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-item span {
+  display: block;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.stat-item strong {
+  font-size: 1.4rem;
+  color: var(--text-color);
+}
+
+.section-progress {
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--primary-color);
+  transition: width 0.5s ease;
+}
+
+.result-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.review-button {
+  background: var(--primary-color);
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.home-button {
+  background: var(--border-color);
+  color: var(--text-color);
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes drawCircle {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes drawCheck {
+  to { stroke-dashoffset: 0; }
+}
+
+@media (max-width: 768px) {
+  .total-score {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .result-actions {
+    flex-direction: column;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .score-progress span {
+    font-size: 2rem;
+  }
+
+  .sections-grid {
+    grid-template-columns: 1fr;
+  }
+}
