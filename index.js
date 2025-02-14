@@ -6,6 +6,7 @@ const fs = require("fs");
 const cors = require("cors");
 const http = require("http");
 const socketIo = require("socket.io");
+const rateLimit = require("express-rate-limit");
 
 const app = express();
 const server = http.createServer(app);
@@ -16,15 +17,26 @@ const UPLOADS_DIR = "uploads";
 const QUESTIONS_FILE = path.join(__dirname, "frontend", "public", "questions.json");
 const RESULTS_FILE = path.join(__dirname, "results.json");
 const STUDENTS_FILE = path.join(__dirname, "students.json");
+const SCHEDULE_FILE = path.join(__dirname, "schedule.json");
 
 // Middleware
 app.use(express.json());
-app.use(cors({ origin: "http://yourfrontend.com" })); // Restrict CORS in production
+app.use(cors({ origin: ["http://localhost:3000", "http://yourfrontend.com"] })); // Update for production
 app.use(express.static(path.join(__dirname, "frontend", "dist")));
 
+// Ensure upload directory exists
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR);
 
-const upload = multer({ dest: UPLOADS_DIR });
+// Multer setup with file validation
+const upload = multer({
+  dest: UPLOADS_DIR,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+      return cb(new Error("Only Excel files are allowed"), false);
+    }
+    cb(null, true);
+  },
+});
 
 /* ===========================
        Utility Functions
@@ -43,16 +55,21 @@ const writeJSONFile = (filePath, data) => {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 };
 
-const saveResultToJSON = (studentName, rollNumber, score) => {
-  let results = readJSONFile(RESULTS_FILE);
-  results.push({ Student: studentName, RollNumber: rollNumber, Score: score });
-  writeJSONFile(RESULTS_FILE, results);
+const hasStudentSubmitted = (rollNumber) => {
+  const results = readJSONFile(RESULTS_FILE);
+  return results.some((result) => result.RollNumber === rollNumber);
 };
 
 /* ===========================
        Authentication
 =========================== */
-app.post("/login", (req, res) => {
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: "Too many login attempts. Please try again later.",
+});
+
+app.post("/login", loginLimiter, (req, res) => {
   const { email, password } = req.body;
   const students = readJSONFile(STUDENTS_FILE);
 
@@ -69,12 +86,12 @@ app.post("/login", (req, res) => {
 =========================== */
 app.post("/upload", upload.single("file"), (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
-  
+
   try {
     const workbook = xlsx.readFile(req.file.path);
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const rawData = xlsx.utils.sheet_to_json(sheet);
-    
+
     const formattedData = rawData.map((row, index) => ({
       id: index + 1,
       subject: row.subject,
@@ -86,9 +103,9 @@ app.post("/upload", upload.single("file"), (req, res) => {
 
     writeJSONFile(QUESTIONS_FILE, formattedData);
     io.emit("data-updated", { message: "Questions updated!" });
-    
-    fs.unlink(req.file.path, (err) => { if (err) console.error("File delete error:", err); });
-    res.json({ message: "File uploaded and questions saved successfully." });
+
+    fs.unlink(req.file.path, () => {});
+    res.json({ message: "Questions uploaded successfully." });
   } catch (error) {
     res.status(500).json({ error: "Error processing file", details: error.message });
   }
@@ -106,7 +123,11 @@ app.get("/api/questions", (req, res) => {
 app.post("/submit", (req, res) => {
   const { studentName, rollNumber, responses } = req.body;
   if (!studentName || !rollNumber || !responses) return res.status(400).json({ error: "Missing details" });
-  
+
+  if (hasStudentSubmitted(rollNumber)) {
+    return res.status(403).json({ message: "You have already submitted the exam" });
+  }
+
   const questions = readJSONFile(QUESTIONS_FILE);
   let totalScore = 0;
 
@@ -116,7 +137,10 @@ app.post("/submit", (req, res) => {
     }
   });
 
-  saveResultToJSON(studentName, rollNumber, totalScore);
+  let results = readJSONFile(RESULTS_FILE);
+  results.push({ Student: studentName, RollNumber: rollNumber, Score: totalScore });
+  writeJSONFile(RESULTS_FILE, results);
+
   io.emit("result-updated", { studentName, rollNumber, totalScore });
   res.json({ message: "Exam submitted successfully!", score: totalScore });
 });
@@ -131,6 +155,7 @@ app.post("/upload-students", upload.single("file"), (req, res) => {
     const workbook = xlsx.readFile(req.file.path);
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     writeJSONFile(STUDENTS_FILE, xlsx.utils.sheet_to_json(sheet));
+
     io.emit("students-updated", { message: "Student list updated!" });
     fs.unlink(req.file.path, () => {});
     res.json({ message: "Student list uploaded successfully!" });
@@ -146,12 +171,44 @@ app.get("/api/students", (req, res) => {
 });
 
 /* ===========================
+        Test Scheduling
+=========================== */
+const readSchedule = () => (fs.existsSync(SCHEDULE_FILE) ? JSON.parse(fs.readFileSync(SCHEDULE_FILE, "utf-8")) : {});
+
+const writeSchedule = (schedule) => {
+  fs.writeFileSync(SCHEDULE_FILE, JSON.stringify(schedule, null, 2));
+};
+
+app.post("/set-schedule", (req, res) => {
+  const { testDate, startTime, endTime } = req.body;
+  if (!testDate || !startTime || !endTime) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  const newSchedule = { date: testDate, startTime, endTime };
+  writeSchedule(newSchedule);
+  io.emit("schedule-updated", newSchedule);
+
+  res.json({ message: "Schedule updated successfully" });
+});
+
+app.get("/get-schedule", (req, res) => {
+  res.json(readSchedule());
+});
+
+/* ===========================
         Socket.io Setup
 =========================== */
 io.on("connection", (socket) => {
   console.log("New client connected");
+
+  socket.emit("data-updated", { message: "Latest questions", data: readJSONFile(QUESTIONS_FILE) });
+  socket.emit("students-updated", { message: "Latest student data", data: readJSONFile(STUDENTS_FILE) });
+  socket.emit("schedule-updated", readSchedule());
+
   socket.on("disconnect", () => console.log("Client disconnected"));
 });
+
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });

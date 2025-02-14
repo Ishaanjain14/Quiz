@@ -1,22 +1,87 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
 import "./instructions.css";
 
 export const InstructionsPage = () => {
   const navigate = useNavigate();
   const [student, setStudent] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
+  const [testSchedule, setTestSchedule] = useState(null);
 
   useEffect(() => {
+    // Fetch student data
     const storedStudent = sessionStorage.getItem("student");
-    console.log("Retrieved Student Data:", storedStudent); // 🔍 Debugging
-
-    if (storedStudent) {
-      setStudent(JSON.parse(storedStudent));
-    } else {
-      navigate("/login"); // Redirect if no student data
+    if (!storedStudent) {
+      navigate("/login");
+      return;
     }
+    setStudent(JSON.parse(storedStudent));
+
+    // Fetch test schedule
+    const fetchSchedule = () => {
+      fetch("http://localhost:3002/get-schedule")
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch schedule");
+          return res.json();
+        })
+        .then((data) => setTestSchedule(data))
+        .catch((error) => {
+          console.error(error);
+          setPopupMessage("Error fetching schedule. Please try again later.");
+          setShowPopup(true);
+        });
+    };
+
+    fetchSchedule();
+
+    // Listen for schedule updates via WebSocket
+    const socket = io("http://localhost:3002");
+    socket.on("schedule-updated", fetchSchedule);
+
+    return () => socket.disconnect();
   }, [navigate]);
+
+  // Helper function to format time
+  const formatTime = (time) => {
+    if (!time) return "N/A";
+    const [hours, minutes] = time.split(":");
+    return new Date(0, 0, 0, hours, minutes).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
+  const handleProceed = () => {
+    if (!isChecked) {
+      setPopupMessage("Please check the box to confirm you've read the instructions");
+      setShowPopup(true);
+      return;
+    }
+
+    if (!testSchedule) {
+      setPopupMessage("Test schedule not available. Contact administrator.");
+      setShowPopup(true);
+      return;
+    }
+
+    const now = new Date();
+    const start = new Date(`${testSchedule.date}T${testSchedule.startTime}`);
+    const end = new Date(`${testSchedule.date}T${testSchedule.endTime}`);
+
+    if (now < start) {
+      setPopupMessage("Test has not started yet");
+      setShowPopup(true);
+    } else if (now > end) {
+      setPopupMessage("Test has already ended");
+      setShowPopup(true);
+    } else {
+      navigate("/exam");
+    }
+  };
 
   return (
     <div className="instructions-container">
@@ -56,12 +121,29 @@ export const InstructionsPage = () => {
         </div>
 
         <div className="proceed-button-container">
-          <a href="/exam">
-            <button className="proceed-button" disabled={!isChecked}>
-              Proceed
-            </button>
-          </a>
+          <button className="proceed-button" onClick={handleProceed}>
+            Proceed
+          </button>
         </div>
+
+        {testSchedule && (
+          <div className="test-schedule">
+            <h3>Test Schedule</h3>
+            <p>Date: {new Date(testSchedule.date).toLocaleDateString()}</p>
+            <p>Start Time: {formatTime(testSchedule.startTime)}</p>
+            <p>End Time: {formatTime(testSchedule.endTime)}</p>
+          </div>
+        )}
+
+        {/* Pop-up Modal */}
+        {showPopup && (
+          <div className="popup-overlay">
+            <div className="popup">
+              <p>{popupMessage}</p>
+              <button onClick={() => setShowPopup(false)}>OK</button>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

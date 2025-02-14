@@ -1,5 +1,5 @@
-import { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { useEffect } from "react";
 import { InstructionsPage } from "./components/Instructions";
 import { ExamInterface } from "./components/ExamInterface";
 import { LoginPage } from "./components/loginpage";
@@ -18,7 +18,27 @@ function App() {
       }
     };
 
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        enableFullscreen();
+      }
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape" || event.key === "F11") {
+        event.preventDefault();
+        enableFullscreen();
+      }
+    };
+
     enableFullscreen();
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
 
   return (

@@ -2,36 +2,11 @@
   {
     "Student": "Alice Doe",
     "RollNumber": 101,
-    "Score": 1
-  },
-  {
-    "Student": "Alice Doe",
-    "RollNumber": 101,
-    "Score": 1
+    "Score": 14
   },
   {
     "Student": "Bob Smith",
     "RollNumber": 102,
-    "Score": 2
-  },
-  {
-    "Student": "Bob Smith",
-    "RollNumber": 102,
-    "Score": 2
-  },
-  {
-    "Student": "Alice Doe",
-    "RollNumber": 101,
-    "Score": 8
-  },
-  {
-    "Student": "Alice Doe",
-    "RollNumber": 101,
-    "Score": 1
-  },
-  {
-    "Student": "Bob Smith",
-    "RollNumber": 102,
-    "Score": 9
+    "Score": 0
   }
 ]
