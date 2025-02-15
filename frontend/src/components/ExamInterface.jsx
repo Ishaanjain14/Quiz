@@ -4,23 +4,61 @@ import Result from "./Result";
 import "./exam.css";
 
 export const ExamInterface = () => {
+  const [student, setStudent] = useState(null);  // Initialize state
+
   const [questions, setQuestions] = useState([]);
+  const [testSchedule, setTestSchedule] = useState(null);
+
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState("");
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState({});
   const [attempted, setAttempted] = useState([]);
+  const [score, setScore] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [timer, setTimer] = useState(0);
-  const [testSchedule, setTestSchedule] = useState(null);
+  const [suspiciousActivity, setSuspiciousActivity] = useState(false);
+  const [exitCount, setExitCount] = useState(0);  // Track full-screen exits
+  const navigate = useNavigate();
   const [showResult, setShowResult] = useState(false);
   const [scoreData, setScoreData] = useState(null);
-  const navigate = useNavigate();
-
-  const [student, setStudent] = useState(null);
   const timerRef = useRef(null);
 
-  // Student session management
+  // Function to enter full-screen mode
+  const enterFullScreen = () => {
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().catch(err => 
+        console.error("Error entering fullscreen:", err)
+      );
+    }
+  };
+
+  useEffect(() => {
+    enterFullScreen(); // Enter full-screen on mount
+  }, []);
+
+  // Function to check full-screen status
+  const handleFullscreenChange = () => {
+    if (!document.fullscreenElement) {
+      setExitCount(prev => prev + 1); // Track exits
+      setSuspiciousActivity(true);
+      alert("Warning: You exited full-screen mode. Your attempt is marked as suspicious.");
+
+      // Optionally force submit after multiple exits
+      if (exitCount >= 2) {
+        alert("Multiple full-screen exits detected. Your exam is being auto-submitted.");
+        handleSubmit();
+      } else {
+        enterFullScreen(); // Re-enter full-screen
+      }
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, [exitCount]);
+
   useEffect(() => {
     const storedStudent = sessionStorage.getItem("student");
     if (storedStudent) {
@@ -30,8 +68,8 @@ export const ExamInterface = () => {
       window.location.href = "/login";
     }
   }, []);
+  
 
-  // Fetch test schedule
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
@@ -46,7 +84,6 @@ export const ExamInterface = () => {
     fetchSchedule();
   }, []);
 
-  // Fetch questions
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
@@ -58,6 +95,8 @@ export const ExamInterface = () => {
           const uniqueSubjects = [...new Set(data.map(q => q.subject))];
           setSubjects(uniqueSubjects);
           setSelectedSubject(uniqueSubjects[0]);
+        } else {
+          console.error("No questions received!");
         }
       } catch (error) {
         console.error("Error fetching questions:", error);
@@ -66,7 +105,6 @@ export const ExamInterface = () => {
     fetchQuestions();
   }, []);
 
-  // Timer and schedule management
   useEffect(() => {
     if (!student || !testSchedule) return;
 
@@ -105,7 +143,6 @@ export const ExamInterface = () => {
     return () => clearInterval(timerRef.current);
   }, [student, testSchedule, navigate]);
 
-  // Prevent window close during test
   useEffect(() => {
     const handleBeforeUnload = (event) => {
       if (!submitted) {
@@ -117,6 +154,9 @@ export const ExamInterface = () => {
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [submitted]);
+
+  // const filteredQuestions = questions.filter((q) => q.subject.toLowerCase() === selectedSubject.toLowerCase());
+
   const handleOptionChange = (option) => {
     if (!filteredQuestions[currentQuestionIndex]) return;
 
@@ -131,7 +171,7 @@ export const ExamInterface = () => {
       setAttempted([...attempted, key]);
     }
   };
-  // Submit handler
+
   const handleSubmit = useCallback(async () => {
     if (submitted || !student) return;
 
@@ -139,7 +179,6 @@ export const ExamInterface = () => {
     sessionStorage.setItem(`examSubmitted_${student["Roll Number"]}`, "true");
     clearInterval(timerRef.current);
 
-    // Calculate scores
     let totalScore = 0;
     const correctAnswers = {};
     const sectionDetails = {};
@@ -153,7 +192,6 @@ export const ExamInterface = () => {
         totalScore += marks;
         correctAnswers[key] = true;
       }
-
       // Section breakdown
       if (!sectionDetails[question.subject]) {
         sectionDetails[question.subject] = {
@@ -162,13 +200,13 @@ export const ExamInterface = () => {
           total: 0
         };
       }
-
       sectionDetails[question.subject].total++;
       if (selectedOption[key] !== undefined) {
         sectionDetails[question.subject].attempted++;
         if (isCorrect) sectionDetails[question.subject].correct++;
       }
     });
+    setScore(totalScore);
 
     // Prepare result data
     const totalPossible = questions.reduce((sum, q) => sum + (q.marks || 1), 0);
@@ -176,7 +214,6 @@ export const ExamInterface = () => {
       name,
       ...data
     }));
-
     setScoreData({
       examName: "Final Examination",
       totalScore: Math.round((totalScore / totalPossible) * 100),
@@ -185,35 +222,35 @@ export const ExamInterface = () => {
       sections,
       percentile: 75 // Should come from server
     });
-
     setShowResult(true);
 
-    // Submit to backend
-    try {
-      await fetch("http://localhost:3002/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          studentName: student.Name,
-          rollNumber: student["Roll Number"],
-          responses: selectedOption,
-          score: totalScore,
-          sectionDetails
-        }),
-      });
-    } catch (error) {
-      console.error("Submission failed:", error);
-    }
-  }, [submitted, student, questions, selectedOption]);
-
-  const handleReviewAnswers = () => {
-    // Implement review functionality
-    console.log("Reviewing answers...");
-  };
-
-  const filteredQuestions = questions.filter(q => 
-    q.subject.toLowerCase() === selectedSubject.toLowerCase()
-  );
+        // Submit to backend
+        try {
+           
+          await fetch("http://localhost:3002/submit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            
+            body: JSON.stringify({
+              studentName: student.Name,
+              rollNumber: student["Roll Number"],
+              responses: selectedOption,
+              score: totalScore,
+              sectionDetails
+            }),
+          });
+        } catch (error) {
+          
+          console.error("Submission failed:", error);
+        }
+      }, [submitted, student, questions, selectedOption]);
+      const handleReviewAnswers = () => {
+        // Implement review functionality
+        console.log("Reviewing answers...");
+      };
+      const filteredQuestions = questions.filter(q => 
+        q.subject.toLowerCase() === selectedSubject.toLowerCase()
+      );
 
   const formatTime = (seconds) => {
     const hrs = Math.floor(seconds / 3600);
@@ -222,10 +259,11 @@ export const ExamInterface = () => {
     return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  if (!questions.length) return <div className="loading">Loading questions...</div>;
+  if (!filteredQuestions.length) return <h2>Loading questions...</h2>;
 
+  
   return (
-    <div className="exam-container">
+     <div className="exam-container">
       {showResult ? (
         <Result 
           scoreData={scoreData}
@@ -235,19 +273,12 @@ export const ExamInterface = () => {
         <>
           <div className="exam-left">
             <div className="exam-topbar">
-              <div className="student-info">
-                {student && (
-                  <h2>
-                    {student.Name} (Roll No: {student["Roll Number"]})
-                  </h2>
-                )}
-              </div>
-
-              <div className="subject-selector">
+              
+              <div className="subject-buttons">
                 {subjects.map(subject => (
                   <button
                     key={subject}
-                    className={`subject-btn ${selectedSubject === subject ? "active" : ""}`}
+                    className={`selectedSubject ${selectedSubject === subject ? "active" : ""}`}
                     onClick={() => {
                       setSelectedSubject(subject);
                       setCurrentQuestionIndex(0);
@@ -257,26 +288,20 @@ export const ExamInterface = () => {
                   </button>
                 ))}
               </div>
-
-              <div className="timer">
-                <span>⏳ Time Remaining:</span>
-                <strong>{formatTime(timer)}</strong>
-              </div>
+              
             </div>
-
             {filteredQuestions[currentQuestionIndex] && (
-              <div className="question-container">
-                <div className="question-header">
-                  <h3>
+              <div className="question-box">
+                
+                  <h2>
                     Question {currentQuestionIndex + 1} of {filteredQuestions.length}
                     <span>({filteredQuestions[currentQuestionIndex].marks || 1} marks)</span>
-                  </h3>
-                </div>
-
-                <div className="question-content">
+                  </h2>
+                
+                  <div className="question-content">
                   <p>{filteredQuestions[currentQuestionIndex].question}</p>
                   
-                  <div className="options-grid">
+                  
                     {filteredQuestions[currentQuestionIndex].options?.map((option, index) => (
                       <label key={index} className="option-label">
                         <input
@@ -288,38 +313,43 @@ export const ExamInterface = () => {
                         <span className="option-text">{option}</span>
                       </label>
                     ))}
-                  </div>
+                  
                 </div>
-
-                <div className="navigation-buttons">
+                
                   <button
+                    className="prevbtn"
                     onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
                     disabled={currentQuestionIndex === 0}
                   >
                     Previous
                   </button>
                   <button
+                    className="nextbtn"
                     onClick={() => setCurrentQuestionIndex(prev => Math.min(filteredQuestions.length - 1, prev + 1))}
                     disabled={currentQuestionIndex >= filteredQuestions.length - 1}
                   >
                     Next
                   </button>
-                  <button 
-                    className="submit-btn"
-                    onClick={handleSubmit}
-                    disabled={submitted}
-                  >
-                    {submitted ? "Submitting..." : "Submit Exam"}
-                  </button>
-                </div>
+                  
+                
               </div>
             )}
           </div>
-
           <div className="exam-right">
+            <div>
+          <div className="student-info">
+            {student && (
+              <h3>
+                {student.Name} | Roll No: {student["Roll Number"]}
+              </h3>
+            )}
+          </div>
+          <div className="timer">Time Left: {formatTime(timer)}</div>
+        </div>
+
             <div className="question-progress">
               <h3>Question Navigator</h3>
-              <div className="question-grid">
+              <div className="question-nav">
                 {filteredQuestions.map((q, index) => (
                   <button
                     key={q.id}
@@ -331,11 +361,21 @@ export const ExamInterface = () => {
                     {index + 1}
                   </button>
                 ))}
+                <button 
+                    className="submitbtn"
+                    onClick={handleSubmit}
+                    disabled={submitted}
+                  >
+                    {submitted ? "Submitting..." : "Submit Exam"}
+                  </button>
               </div>
+              
             </div>
-          </div>
+            </div>
         </>
       )}
     </div>
   );
 };
+        
+      
