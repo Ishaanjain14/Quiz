@@ -2,11 +2,13 @@
   {
     "Student": "Alice Doe",
     "RollNumber": 101,
-    "Score": 14
+    "Score": 14,
+    "isSuspicious": false
   },
   {
     "Student": "Bob Smith",
     "RollNumber": 102,
-    "Score": 0
+    "Score": 0,
+    "isSuspicious": false
   }
 ]
