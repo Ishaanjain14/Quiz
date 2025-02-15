@@ -46,7 +46,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/instructions" element={<ProtectedRoute><InstructionsPage /></ProtectedRoute>} />
-        <Route path="/exam" element={<ExamInterface />} />
+        <Route path="/exam" element={<ProtectedRoute><ExamInterface /></ProtectedRoute>} />
         <Route path="/upload" element={<UploadExcel />} />
       </Routes>
     </Router>

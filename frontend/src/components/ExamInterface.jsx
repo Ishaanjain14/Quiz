@@ -59,15 +59,15 @@ export const ExamInterface = () => {
     return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, [exitCount]);
 
-  // useEffect(() => {
-  //   const storedStudent = sessionStorage.getItem("student");
-  //   if (storedStudent) {
-  //     setStudent(JSON.parse(storedStudent));
-  //   } else {
-  //     alert("Student details missing! Redirecting to login.");
-  //     window.location.href = "/login";
-  //   }
-  // }, []);
+  useEffect(() => {
+    const storedStudent = sessionStorage.getItem("student");
+    if (storedStudent) {
+      setStudent(JSON.parse(storedStudent));
+    } else {
+      alert("Student details missing! Redirecting to login.");
+      window.location.href = "/login";
+    }
+  }, []);
   
 
   useEffect(() => {
@@ -87,7 +87,7 @@ export const ExamInterface = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await fetch("questions.json");
+        const response = await fetch("http://localhost:3002/api/questions");
         if (!response.ok) throw new Error("Failed to fetch questions");
         const data = await response.json();
         if (data.length > 0) {
