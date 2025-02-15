@@ -18,6 +18,7 @@
 }
 
 .exam-left {
+  position: relative; 
   flex: 3;
   background: white;
   padding: 25px;
@@ -208,13 +209,13 @@ button:hover:not(:disabled) {
 
   
 
-.submitbtn{
+/* .submitbtn{
   position: absolute;
   margin-top: 21%;
   margin-left: 10%;
   background-color: red;
   color: #e74c3c;
-}
+} */
 .nextbtn{
   position: absolute;
   margin-top: 8%;
@@ -224,4 +225,71 @@ button:hover:not(:disabled) {
   position: absolute;
   margin-top: 8%;
 
+}
+.prevbtn,
+.nextbtn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--secondary-color);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: absolute; /* Positioned relative to the .exam-left div */
+  bottom: 20px; /* Positioned at the bottom of the .exam-left div */
+  z-index: 1000; /* Ensure it's above other elements */
+}
+
+.prevbtn:hover,
+.nextbtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.prevbtn {
+  left: 20px; /* Positioned on the bottom-left corner of .exam-left */
+}
+
+.nextbtn {
+  right: 20px; /* Positioned on the bottom-right corner of .exam-left */
+}
+
+@media (max-width: 768px) {
+  .prevbtn,
+  .nextbtn {
+    padding: 8px 15px; /* Smaller padding for smaller screens */
+    bottom: 10px; /* Adjusted for smaller screens */
+  }
+
+  .prevbtn {
+    left: 10px; /* Adjusted for smaller screens */
+  }
+
+  .nextbtn {
+    right: 10px; /* Adjusted for smaller screens */
+  }
+}
+.submitbtn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--danger-color); /* Red color */
+  color: white;
+  cursor: pointer;
+  /* transition: all 0.3s ease; */
+  position: absolute; /* Positioned relative to the .exam-container */
+   /* Positioned below .exam-right */
+  right: 6%;/*Center horizontally */
+  transform: translateX(-50%); /* Adjust for exact centering */
+  z-index: 1000; /* Ensure it's above other elements */
+}
+
+.submitbtn:hover {
+  opacity: 0.9;
+   /* Maintain center alignment on hover */
+}
+.submitbtn {
+  border-radius: 5px;
+  background-color: var(--danger-color) !important; /* Hardcoded red color */
+  color: white;
 }
