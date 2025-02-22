@@ -1,12 +1,20 @@
 [
   {
-    "Name": "Alice Doe",
-    "Roll Number": 101,
-    "Email": "alice@example.com"
+    "Name": "John Doe",
+    "Roll Number": 121,
+    "Email": "john.doe@example.com",
+    "Image": "dummy_image2.jpg"
   },
   {
-    "Name": "Bob Smith",
-    "Roll Number": 102,
-    "Email": "bob@example.com"
+    "Name": "Jane Smith",
+    "Roll Number": 122,
+    "Email": "jane.smith@example.com",
+    "Image": "dummy_image2.jpg"
+  },
+  {
+    "Name": "Peter Jones",
+    "Roll Number": 123,
+    "Email": "peter.jones@example.com",
+    "Image": "dummy_image2.jpg"
   }
 ]

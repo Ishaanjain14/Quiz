@@ -15,10 +15,12 @@ const io = socketIo(server);
 const PORT = process.env.PORT || 3002;
 const UPLOADS_DIR = "uploads";
 const QUESTIONS_FILE = path.join(__dirname, "frontend", "public", "questions.json");
-const RESULTS_FILE = path.join(__dirname, "results.json");
+const RESULTS_FILE = path.join(__dirname,"frontend","public", "results.json");
 const STUDENTS_FILE = path.join(__dirname, "students.json");
 const SCHEDULE_FILE = path.join(__dirname, "schedule.json");
-
+const questionTemplatePath = path.join(__dirname, "templates", "question_template.xlsx");
+const studentTemplatePath = path.join(__dirname, "templates", "student_template.xlsx");
+const STUDENT_IMAGES_DIR = path.join(__dirname, "uploads", "students");
 // Middleware
 app.use(express.json());
 app.use(cors({ origin: ["http://localhost:3000", "http://yourfrontend.com"] })); // Update for production
@@ -81,6 +83,63 @@ app.post("/login", loginLimiter, (req, res) => {
   res.status(401).json({ success: false, message: "Invalid credentials" });
 });
 
+// Route for downloading Question Template
+// Enhance template download routes with error checking
+app.get("/download/question-template.xlsx", (req, res) => {
+  if (!fs.existsSync(questionTemplatePath)) {
+    return res.status(404).json({ error: "Template not found" });
+  }
+  res.download(questionTemplatePath, (err) => {
+    if (err) console.error("Download failed:", err);
+  });
+});
+
+app.get("/download/student-template.xlsx", (req, res) => {
+  if (!fs.existsSync(studentTemplatePath)) {
+    return res.status(404).json({ error: "Template not found" });
+  }
+  res.download(studentTemplatePath, (err) => {
+    if (err) console.error("Download failed:", err);
+  });
+});
+
+// Route for downloading Student Template
+app.get("/download/student-template.xlsx", (req, res) => {
+  res.download(studentTemplatePath, "student_template.xlsx", (err) => {
+    if (err) {
+      console.error("Error downloading student template:", err);
+      res.status(500).send("Error downloading the file");
+    }
+  });
+});
+// Correct the results download route
+app.get("/download/results.xlsx", (req, res) => {
+  const jsonFilePath = RESULTS_FILE; // Use the existing RESULTS_FILE path
+  const excelFilePath = path.join(__dirname, "results.xlsx"); // Save in backend root
+
+  // Check if JSON file exists
+  if (!fs.existsSync(jsonFilePath)) {
+    return res.status(404).json({ error: "Results file not found" });
+  }
+
+  // Read JSON data
+  const jsonData = readJSONFile(jsonFilePath);
+
+  // Convert to Excel
+  const worksheet = xlsx.utils.json_to_sheet(jsonData);
+  const workbook = xlsx.utils.book_new();
+  xlsx.utils.book_append_sheet(workbook, worksheet, "Results");
+  xlsx.writeFile(workbook, excelFilePath);
+
+  // Send file
+  res.download(excelFilePath, "results.xlsx", (err) => {
+    if (err) {
+      console.error("Download error:", err);
+      res.status(500).send("Error downloading results");
+    }
+    fs.unlinkSync(excelFilePath); // Cleanup after download
+  });
+});
 /* ===========================
       Question Management
 =========================== */

@@ -1,0 +1,17 @@
+[
+  {
+    "Student": "Bob Smith",
+    "RollNumber": 102,
+    "Score": 1
+  },
+  {
+    "Student": "John Doe",
+    "RollNumber": 121,
+    "Score": 1
+  },
+  {
+    "Student": "Jane Smith",
+    "RollNumber": 122,
+    "Score": 1
+  }
+]
