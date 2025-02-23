@@ -58,18 +58,8 @@ const Result = ({ scoreData, onReviewAnswers }) => {
             <path d="M30,50 l20,20 l40,-40" className="check-mark" strokeLinecap="round" />
           </svg>
         </div>
-        <h2>Your Score: {animatedScore} / {scoreData.totalScore}</h2>
+        <h2>Submitted Succcesfully! </h2>
       </div>
-
-      
-
-      {showDetails && (
-        <div className="score-details">
-          <p>Correct: {scoreData.correctAnswers}</p>
-          <p>Incorrect: {scoreData.wrongAnswers}</p>
-          <p>Total Questions: {scoreData.totalQuestions}</p>
-        </div>
-      )}
     </div>
   );
 };
