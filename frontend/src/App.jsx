@@ -5,6 +5,7 @@ import { ExamInterface } from "./components/ExamInterface";
 import { LoginPage } from "./components/loginpage";
 import { UploadExcel } from "./components/UploadExcel";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { AdminLoginPage } from "./components/adminLogin";
 
 function App() {
   useEffect(() => {
@@ -48,6 +49,7 @@ function App() {
         <Route path="/instructions" element={<ProtectedRoute><InstructionsPage /></ProtectedRoute>} />
         <Route path="/exam" element={<ProtectedRoute><ExamInterface /></ProtectedRoute>} />
         <Route path="/upload" element={<UploadExcel />} />
+        <Route path="/admin" element={<AdminLoginPage />} />
       </Routes>
     </Router>
   );
