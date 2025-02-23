@@ -61,10 +61,7 @@ const Result = ({ scoreData, onReviewAnswers }) => {
         <h2>Your Score: {animatedScore} / {scoreData.totalScore}</h2>
       </div>
 
-      <button className="review-btn" onClick={onReviewAnswers}>Review Answers</button>
-      <button className="details-btn" onClick={handleToggleDetails}>
-        {showDetails ? 'Hide Details' : 'Show Details'}
-      </button>
+      
 
       {showDetails && (
         <div className="score-details">
