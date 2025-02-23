@@ -376,7 +376,7 @@ button:hover:not(:disabled) {
   cursor: pointer;
   position: fixed;
   bottom: 40px;
-  right: 30px;
+  right: 40px;
   z-index: 1000;
   transition: all 0.3s ease;
 }
