@@ -375,8 +375,8 @@ button:hover:not(:disabled) {
   color: white;
   cursor: pointer;
   position: fixed;
-  bottom: 30px;
-  right: 20px;
+  bottom: 40px;
+  right: 30px;
   z-index: 1000;
   transition: all 0.3s ease;
 }
@@ -384,4 +384,30 @@ button:hover:not(:disabled) {
 .submitbtn:hover {
   opacity: 0.9;
   transform: translateY(-1px);
+}
+.question-btn {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid var(--light-gray);
+  border-radius: 5px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.question-btn.attempted {
+  background-color: var(--success-color); /* Green */
+  color: white;
+  border-color: var(--success-color);
+}
+
+.question-btn.marked {
+  background-color: #ffcc00; /* Yellow */
+  color: #000; /* Black text for contrast */
+  border-color: #ffcc00; /* Yellow border */
+}
+
+.question-btn.active {
+  border-color: var(--secondary-color);
+  transform: scale(1.1);
 }

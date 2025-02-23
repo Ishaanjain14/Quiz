@@ -23,7 +23,7 @@ export const ExamInterface = () => {
   const [showResult, setShowResult] = useState(false);
   const [scoreData, setScoreData] = useState(null);
   const timerRef = useRef(null);
-
+  const [markedForReview, setMarkedForReview] = useState([]);
   // Function to enter full-screen mode
   const enterFullScreen = () => {
     if (document.documentElement.requestFullscreen) {
@@ -39,14 +39,19 @@ export const ExamInterface = () => {
   const suspiciousActivityRef = useRef(false);
   // Function to check full-screen status
   const handleFullscreenChange = () => {
-    if (!document.fullscreenElement && !submitted) { // Check if the exam is not submitted
-      setExitCount(prev => prev + 1); // Track exits
+    if (!document.fullscreenElement && !submitted) {
+      // Check if the exam is not submitted
+      setExitCount((prev) => prev + 1); // Track exits
       setSuspiciousActivity(true);
-      alert("Warning: You exited full-screen mode. Your attempt is marked as suspicious.");
-  
+      alert(
+        "Warning: You exited full-screen mode. Your attempt is marked as suspicious."
+      );
+
       // Optionally force submit after multiple exits
       if (exitCount >= 2) {
-        alert("Multiple full-screen exits detected. Your exam is being auto-submitted.");
+        alert(
+          "Multiple full-screen exits detected. Your exam is being auto-submitted."
+        );
         handleSubmit();
       } else {
         enterFullScreen(); // Re-enter full-screen
@@ -56,8 +61,9 @@ export const ExamInterface = () => {
 
   useEffect(() => {
     document.addEventListener("fullscreenchange", handleFullscreenChange);
-    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
-  }, [exitCount, submitted]); 
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, [exitCount, submitted]);
 
   useEffect(() => {
     const storedStudent = sessionStorage.getItem("student");
@@ -82,7 +88,17 @@ export const ExamInterface = () => {
     };
     fetchSchedule();
   }, []);
-
+  const handleMarkForReview = () => {
+    const currentQuestionId = filteredQuestions[currentQuestionIndex].id;
+    setMarkedForReview((prev) =>
+      prev.includes(currentQuestionId)
+        ? prev.filter((id) => id !== currentQuestionId) // Unmark if already marked
+        : [...prev, currentQuestionId] // Mark for review
+    );
+    setCurrentQuestionIndex((prev) =>
+      Math.min(filteredQuestions.length - 1, prev + 1)
+    );
+  };
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
@@ -158,20 +174,22 @@ export const ExamInterface = () => {
   // const filteredQuestions = questions.filter((q) => q.subject.toLowerCase() === selectedSubject.toLowerCase());
 
   const handleOptionChange = (option) => {
-    if (!filteredQuestions[currentQuestionIndex]) return;
-
     const key = filteredQuestions[currentQuestionIndex].id;
-
+  
     setSelectedOption((prev) => ({
       ...prev,
       [key]: option,
     }));
-
+  
     if (!attempted.includes(key)) {
       setAttempted([...attempted, key]);
     }
+  
+    // Remove the question from the markedForReview list if it was marked
+    if (markedForReview.includes(key)) {
+      setMarkedForReview((prev) => prev.filter((id) => id !== key));
+    }
   };
-
   const handleSubmit = useCallback(async () => {
     if (submitted || !student) return;
 
@@ -333,18 +351,12 @@ export const ExamInterface = () => {
                   Previous
                 </button>
                 <button
-                  className="mark-review-btn"
-                  onClick={() =>
-                    setCurrentQuestionIndex((prev) =>
-                      Math.min(filteredQuestions.length - 1, prev + 1)
-                    )
-                  }
-                  disabled={
-                    currentQuestionIndex >= filteredQuestions.length - 1
-                  }
-                >
-                  Mark as Review & Next
-                </button>
+                    className="mark-review-btn"
+                    onClick={handleMarkForReview}
+                    disabled={currentQuestionIndex >= filteredQuestions.length - 1}
+                  >
+                    Mark as Review & Next
+                  </button>
                 <button
                   className="nextbtn"
                   onClick={() =>
@@ -380,14 +392,15 @@ export const ExamInterface = () => {
                   <button
                     key={q.id}
                     className={`question-btn 
-                      ${currentQuestionIndex === index ? "active" : ""} 
-                      ${attempted.includes(q.id) ? "attempted" : ""}`}
+                        ${currentQuestionIndex === index ? "active" : ""} 
+                        ${attempted.includes(q.id) ? "attempted" : ""}
+                        ${markedForReview.includes(q.id) ? "marked" : ""}`}
                     onClick={() => setCurrentQuestionIndex(index)}
                   >
                     {index + 1}
                   </button>
                 ))}
-                <button
+                 <button
                   className="submitbtn"
                   onClick={handleSubmit}
                   disabled={submitted}
