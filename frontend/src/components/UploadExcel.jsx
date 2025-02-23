@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import "./upload.css";
 
@@ -20,7 +21,7 @@ export const UploadExcel = () => {
   const [loadingQuestions, setLoadingQuestions] = useState(false);
   const [loadingStudents, setLoadingStudents] = useState(false);
   const [isTestOver, setIsTestOver] = useState(false);
-
+  const navigate = useNavigate();
   // Handle file selection
   const handleFileChange = (event, setFileFunction) => {
     const selectedFile = event.target.files[0];
@@ -28,7 +29,10 @@ export const UploadExcel = () => {
       setFileFunction(selectedFile);
     }
   };
-
+  const handleLogout = () => {
+    localStorage.removeItem("isAuthenticated");
+    navigate("/admin");
+  };
   // Validate file type
   const validateFile = (file, allowedExtensions) => {
     const fileExtension = file.name.split(".").pop().toLowerCase();
@@ -158,7 +162,9 @@ export const UploadExcel = () => {
   return (
     <div className="upload-container">
       <h1>ADMIN PORTAL</h1>
-
+      <button onClick={handleLogout} className="logout-btn">
+          Logout
+        </button>
       {/* Upload Questions */}
       <section className="upload-section">
         <h2>Upload Questions File</h2>

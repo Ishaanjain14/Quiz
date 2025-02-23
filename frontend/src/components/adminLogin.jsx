@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import "./login.css"; // Ensure the CSS file is linked properly
 
@@ -8,17 +8,24 @@ export const AdminLoginPage = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Redirect if already logged in
+    if (localStorage.getItem("isAuthenticated")) {
+      navigate("/upload");
+    }
+  }, [navigate]);
+
   const handleLogin = (e) => {
     e.preventDefault();
     
-    // Basic validation (replace with API call)
     if (email === "admin@example.com" && password === "admin123") {
-      navigate("/dashboard"); // Redirect to admin dashboard
+      localStorage.setItem("isAuthenticated", "true");
+      navigate("/upload");
     } else {
       setError("Invalid email or password");
     }
   };
-
+  
   return (
     <div className="login-container">
       <div className="login-box">
