@@ -227,7 +227,8 @@ button:hover:not(:disabled) {
 
 }
 .prevbtn,
-.nextbtn {
+.nextbtn,
+.mark-review-btn {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -283,6 +284,20 @@ button:hover:not(:disabled) {
    
   z-index: 1000; /* Ensure it's above other elements */
 }
+.mark-review-btn{
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--danger-color); /* Red color */
+  color: white;
+  cursor: pointer;
+  
+  position: absolute; /* Positioned relative to the .exam-container */
+   /* Positioned below .exam-right */
+  right: 40%;/*Center horizontally */
+   
+  z-index: 1000; /* Ensure it's above other elements */
+}
 
 
 .submitbtn {
@@ -331,4 +346,56 @@ button:hover:not(:disabled) {
   margin: 0.25rem 0 0;
   color: #7f8c8d;
   font-size: 0.9rem;
+}
+/* Styles for navigation buttons */
+.mark-review-btn {
+  background-color: #ffcc00; /* Yellow for Mark for Review */
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.mark-review-btn:disabled {
+  background-color: #ccc; /* Gray when disabled */
+  cursor: not-allowed;
+}
+
+.nextbtn {
+  background-color: #4caf50; /* Green for Save & Next */
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.nextbtn:disabled {
+  background-color: #ccc; /* Gray when disabled */
+  cursor: not-allowed;
+}
+
+/* Styles for question navigation buttons */
+.question-btn {
+  background-color: #f0f0f0; /* Default color for unanswered questions */
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.question-btn.attempted {
+  background-color: #4caf50; /* Green for attempted questions */
+  color: #fff;
+}
+
+.question-btn.marked-for-review {
+  background-color: #ffcc00; /* Yellow for marked for review */
+  color: #000;
+}
+
+.question-btn.active {
+  border: 2px solid #007bff; /* Highlight the current question */
 }
