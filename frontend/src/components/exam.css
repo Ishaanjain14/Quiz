@@ -18,12 +18,12 @@
 }
 
 .exam-left {
-  position: relative; 
+  position: relative;
   flex: 3;
   background: white;
   padding: 25px;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .exam-right {
@@ -31,9 +31,10 @@
   align-items: center;
   justify-content: center;
   justify-items: center;
-  margin-top: 10%;
+  margin-top: 5%;
   max-height: 300px; /* Ensures scrolling activates if content exceeds this height */
-   /* Enables vertical scrolling */
+  /* Enables vertical scrolling */
+ 
 }
 
 .exam-topbar {
@@ -44,20 +45,20 @@
   padding-bottom: 20px;
   border-bottom: 2px solid var(--light-gray);
 }
-.student{
+.student {
   background: white;
   padding: 25px;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  border:2px solid var(--light-gray);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--light-gray);
   background: white;
   padding: 25px;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   width: 80%;
 }
 .student-info h3 {
-  display:inline;
+  display: inline;
   margin: 0;
   color: var(--primary-color);
   font-size: 1.2rem;
@@ -85,8 +86,8 @@
 }
 
 .timer {
-  display:inline;
-  
+  display: inline;
+
   font-weight: bold;
   color: var(--primary-color);
   background-color: var(--light-gray);
@@ -97,7 +98,7 @@
   background: white;
   padding: 25px;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   height: 300px;
   margin-top: 10px;
   overflow-y: auto;
@@ -195,47 +196,42 @@ button:hover:not(:disabled) {
   .exam-container {
     flex-direction: column;
   }
-  
+
   .exam-topbar {
     flex-direction: column;
     gap: 15px;
     align-items: flex-start;
   }
-  
+
   .question-nav {
     grid-template-columns: repeat(4, 4px);
   }
-  .nextbtn{
+  .nextbtn {
     position: absolute;
     margin-left: 20%;
     margin-top: 8%;
   }
-  .prevbtn{
+  .prevbtn {
     position: absolute;
     margin-bottom: 2%;
-  
   }
-  
 }
 
-  
-
-.submitbtn{
+.submitbtn {
   position: absolute;
   margin-top: 21%;
   margin-left: 10%;
   background-color: red;
   color: #e74c3c;
 }
-.nextbtn{
+.nextbtn {
   position: absolute;
   margin-top: 8%;
   margin-left: 53%;
 }
-.prevbtn{
+.prevbtn {
   position: absolute;
   margin-top: 8%;
-
 }
 .prevbtn,
 .nextbtn,
@@ -265,7 +261,6 @@ button:hover:not(:disabled) {
   background-color: #ccc; /* Gray when disabled */
   cursor: not-allowed;
 }
-
 
 .prevbtn:hover,
 .nextbtn:hover {
@@ -303,26 +298,26 @@ button:hover:not(:disabled) {
   background-color: var(--danger-color); /* Red color */
   color: white;
   cursor: pointer;
-  
+
   position: absolute; /* Positioned relative to the .exam-container */
-   /* Positioned below .exam-right */
-  right: 7%;/*Center horizontally */
-   
+  /* Positioned below .exam-right */
+  right: 7%; /*Center horizontally */
+
   z-index: 1000; /* Ensure it's above other elements */
 }
 
-.mark-review-btn{
+.mark-review-btn {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
   background-color: var(--danger-color); /* Red color */
   color: white;
   cursor: pointer;
-  
+
   position: absolute; /* Positioned relative to the .exam-container */
-   /* Positioned below .exam-right */
-  right: 40%;/*Center horizontally */
-   
+  /* Positioned below .exam-right */
+  right: 40%; /*Center horizontally */
+
   z-index: 1000; /* Ensure it's above other elements */
 }
 .submitbtn {
@@ -376,14 +371,14 @@ button:hover:not(:disabled) {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  background-color: var(--danger-color); 
+  background-color: var(--danger-color);
   color: white;
   cursor: pointer;
-  position: fixed; 
-  bottom: 30px; 
-  right: 20px; 
-  z-index: 1000; 
-  transition: all 0.3s ease; 
+  position: fixed;
+  bottom: 30px;
+  right: 20px;
+  z-index: 1000;
+  transition: all 0.3s ease;
 }
 
 .submitbtn:hover {
