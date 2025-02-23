@@ -1,11 +1,24 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Result.css';
 
 const Result = ({ scoreData, onReviewAnswers }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [animatedScore, setAnimatedScore] = useState(0);
+  const navigate = useNavigate();
 
-  // Animation for score count-up using requestAnimationFrame
+  // Prevent Navigation
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      e.preventDefault();
+      e.returnValue = ''; // Some browsers override this message
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+  // Score Animation
   useEffect(() => {
     if (scoreData) {
       let start = 0;
@@ -26,79 +39,41 @@ const Result = ({ scoreData, onReviewAnswers }) => {
   }, [scoreData]);
 
   const handleToggleDetails = useCallback(() => {
-    setShowDetails(prev => !prev);
+    setShowDetails((prev) => !prev);
   }, []);
 
   if (!scoreData) return null;
 
+  // Circular Progress Bar Calculation
   const radius = 45;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (circumference * (animatedScore / 100));
+  const strokeDashoffset = circumference - (circumference * (animatedScore / scoreData.totalScore));
 
   return (
     <div className="result-container">
       <div className="result-header">
         <div className="completion-check">
           <svg viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="45" className="check-circle" />
-            <path 
-              d="M30,50 l20,20 l40,-40" 
-              className="check-mark"
-              strokeLinecap="round"
-            />
+            <circle cx="50" cy="50" r={radius} className="check-circle" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} />
+            <path d="M30,50 l20,20 l40,-40" className="check-mark" strokeLinecap="round" />
           </svg>
         </div>
-        <h1>Test Submitted Successfully!</h1>
-        <p className="test-completion-text">
-          You've completed the {scoreData.examName}. Here's your performance breakdown.
-        </p>
+        <h2>Your Score: {animatedScore} / {scoreData.totalScore}</h2>
       </div>
 
-      <div className="score-summary">
-          <div className="score-details">
-            <h3>Total Score</h3>
-            <p>{scoreData.correctAnswers} / {scoreData.totalQuestions} Correct</p>
-            <p>Percentile: {scoreData.percentile}%</p>
-          </div>
+      <button className="review-btn" onClick={onReviewAnswers}>Review Answers</button>
+      <button className="details-btn" onClick={handleToggleDetails}>
+        {showDetails ? 'Hide Details' : 'Show Details'}
+      </button>
+
+      {showDetails && (
+        <div className="score-details">
+          <p>Correct: {scoreData.correctAnswers}</p>
+          <p>Incorrect: {scoreData.wrongAnswers}</p>
+          <p>Total Questions: {scoreData.totalQuestions}</p>
         </div>
-
-        <button className="toggle-details" onClick={handleToggleDetails}>
-          {showDetails ? 'Hide Details' : 'Show Section-wise Breakdown'}
-        </button>
-
-        {showDetails && (
-          <div className="section-breakdown">
-            <h2>Section-wise Performance</h2>
-            <div className="sections-grid">
-              {scoreData.sections.map((section, index) => (
-                <div key={index} className="section-card">
-                  <h3>{section.name}</h3>
-                  <div className="section-stats">
-                    <div className="stat-item">
-                      <span>Attempted</span>
-                      <strong>{section.attempted}</strong>
-                    </div>
-                    <div className="stat-item">
-                      <span>Correct</span>
-                      <strong>{section.correct}</strong>
-                    </div>
-                    <div className="stat-item">
-                      <span>Total</span>
-                      <strong>{section.total}</strong>
-                    </div>
-                  </div>
-                  <div className="section-progress">
-                    <div 
-                      className="progress-bar"
-                      style={{ width: `${(section.attempted / section.total) * 100}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+      )}
+    </div>
   );
 };
 

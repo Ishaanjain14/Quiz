@@ -180,7 +180,7 @@ app.get("/api/questions", (req, res) => {
         Exam Submission
 =========================== */
 app.post("/submit", (req, res) => {
-  const { studentName, rollNumber, responses } = req.body;
+  const { studentName, rollNumber, responses, suspicious } = req.body;
   if (!studentName || !rollNumber || !responses) return res.status(400).json({ error: "Missing details" });
 
   if (hasStudentSubmitted(rollNumber)) {
@@ -197,7 +197,7 @@ app.post("/submit", (req, res) => {
   });
 
   let results = readJSONFile(RESULTS_FILE);
-  results.push({ Student: studentName, RollNumber: rollNumber, Score: totalScore });
+  results.push({ Student: studentName, RollNumber: rollNumber, Score: totalScore, isSuspicious: suspicious});
   writeJSONFile(RESULTS_FILE, results);
 
   io.emit("result-updated", { studentName, rollNumber, totalScore });
