@@ -333,6 +333,19 @@ export const ExamInterface = () => {
                   Previous
                 </button>
                 <button
+                  className="mark-review-btn"
+                  onClick={() =>
+                    setCurrentQuestionIndex((prev) =>
+                      Math.min(filteredQuestions.length - 1, prev + 1)
+                    )
+                  }
+                  disabled={
+                    currentQuestionIndex >= filteredQuestions.length - 1
+                  }
+                >
+                  Mark as Review & Next
+                </button>
+                <button
                   className="nextbtn"
                   onClick={() =>
                     setCurrentQuestionIndex((prev) =>
@@ -343,7 +356,7 @@ export const ExamInterface = () => {
                     currentQuestionIndex >= filteredQuestions.length - 1
                   }
                 >
-                  Next
+                  Save & Next
                 </button>
               </div>
             )}
