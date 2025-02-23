@@ -21,49 +21,79 @@
   min-height: 100vh;
 }
 
-h1 {
+.header {
   text-align: center;
-  color: var(--primary);
   margin-bottom: 3rem;
-  font-size: 2.5rem;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding: 1rem;
+  border-radius: var(--radius);
 }
 
 .upload-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-  margin-top: 2rem;
+  padding: 1rem;
 }
 
-.upload-section, .upload-card, .download-section {
+.upload-card {
   background: var(--card-bg);
+  backdrop-filter: blur(10px);
   border-radius: var(--radius);
   padding: 2rem;
   box-shadow: var(--shadow);
   transition: var(--transition);
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.upload-section h2, .upload-card h2, .download-section h2 {
-  color: var(--primary);
-  margin-bottom: 1.5rem;
+.upload-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
   font-size: 1.5rem;
-  border-bottom: 2px solid var(--primary);
-  padding-bottom: 0.5rem;
+  color: var(--text);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
 }
 
-input[type="file"] {
-  width: 100%;
-  margin: 1rem 0;
-  padding: 1rem;
+.file-input-wrapper {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.file-input-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
   border: 2px dashed #e2e8f0;
   border-radius: var(--radius);
-  background: rgba(255,255,255,0.5);
   cursor: pointer;
+  transition: var(--transition);
+  background: rgba(255, 255, 255, 0.5);
+  min-height: 100px;
+  text-align: center;
 }
 
-button {
+.file-input-label:hover {
+  border-color: var(--primary);
+  background: rgba(67, 97, 238, 0.05);
+}
+
+.file-input-label.dragover {
+  border-color: var(--success);
+  background: rgba(6, 214, 160, 0.05);
+}
+
+.upload-button {
   width: 100%;
   padding: 1rem;
   background: var(--primary);
@@ -73,15 +103,18 @@ button {
   cursor: pointer;
   font-weight: 600;
   transition: var(--transition);
-  margin: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-button:hover {
+.upload-button:hover {
   background: var(--primary-dark);
-  transform: translateY(-2px);
+  transform: scale(1.02);
 }
 
-button:disabled {
+.upload-button:disabled {
   background: #94a3b8;
   cursor: not-allowed;
   transform: none;
@@ -89,23 +122,29 @@ button:disabled {
 
 .schedule-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  margin: 1.5rem 0;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.time-inputs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
 }
 
 .input-group {
-  display: flex;
-  flex-direction: column;
+  position: relative;
 }
 
 .input-group label {
+  display: block;
   margin-bottom: 0.5rem;
   color: var(--text);
   font-weight: 500;
 }
 
 .input-group input {
+  width: 100%;
   padding: 0.75rem;
   border: 2px solid #e2e8f0;
   border-radius: 8px;
@@ -116,18 +155,7 @@ button:disabled {
 .input-group input:focus {
   outline: none;
   border-color: var(--primary);
-}
-
-.download-section {
-  margin-top: 2rem;
-}
-
-.download-section button {
-  background: var(--success);
-}
-
-.download-section button:hover {
-  background: #05b888;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
 }
 
 .feedback-message {
@@ -135,6 +163,9 @@ button:disabled {
   border-radius: 8px;
   margin-top: 1rem;
   font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .feedback-message.success {
@@ -149,29 +180,86 @@ button:disabled {
   border: 1px solid var(--error);
 }
 
-/* Loading spinner */
+.download-section {
+  margin-top: 2rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.download-button {
+  background: var(--secondary);
+  color: var(--text);
+  padding: 1rem;
+  border-radius: var(--radius);
+  text-align: center;
+  transition: var(--transition);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.download-button:hover {
+  background: #3aa9c9;
+  transform: translateY(-2px);
+}
+
+.progress-bar {
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--primary);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
 .loading-spinner {
-  display: inline-block;
   width: 20px;
   height: 20px;
-  border: 3px solid rgba(255,255,255,0.3);
-  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.3);
   border-top-color: white;
-  animation: spin 1s ease-in-out infinite;
-  margin-right: 8px;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
-  .schedule-grid {
-    grid-template-columns: 1fr;
-  }
-  
   .upload-container {
     padding: 1rem;
   }
+  
+  .upload-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .time-inputs {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Glassmorphism effect for modern look */
+.upload-card {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 255, 255, 0.3) 100%
+  );
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Enhanced file input drag/drop zone */
+.drag-drop-zone {
+  border: 2px dashed var(--primary);
+  background: rgba(67, 97, 238, 0.05);
 }
