@@ -1,3 +1,4 @@
+require("dotenv").config();
 const path = require("path");
 const express = require("express");
 const multer = require("multer");
@@ -21,6 +22,7 @@ const SCHEDULE_FILE = path.join(__dirname, "schedule.json");
 const questionTemplatePath = path.join(__dirname, "templates", "question_template.xlsx");
 const studentTemplatePath = path.join(__dirname, "templates", "student_template.xlsx");
 const STUDENT_IMAGES_DIR = path.join(__dirname, "uploads", "students");
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://yourfrontend.com";
 // Middleware
 app.use(express.json());
 app.use(cors({ origin: ["http://localhost:3000", "http://yourfrontend.com"] })); // Update for production
