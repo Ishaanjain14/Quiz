@@ -24,6 +24,15 @@ export const ExamInterface = () => {
   const [scoreData, setScoreData] = useState(null);
   const timerRef = useRef(null);
   const [markedForReview, setMarkedForReview] = useState([]);
+
+  const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  };
+
   // Function to enter full-screen mode
   const enterFullScreen = () => {
     if (document.documentElement.requestFullscreen) {
@@ -90,10 +99,11 @@ export const ExamInterface = () => {
   }, []);
   const handleMarkForReview = () => {
     const currentQuestionId = filteredQuestions[currentQuestionIndex].id;
-    setMarkedForReview((prev) =>
-      prev.includes(currentQuestionId)
-        ? prev.filter((id) => id !== currentQuestionId) // Unmark if already marked
-        : [...prev, currentQuestionId] // Mark for review
+    setMarkedForReview(
+      (prev) =>
+        prev.includes(currentQuestionId)
+          ? prev.filter((id) => id !== currentQuestionId) // Unmark if already marked
+          : [...prev, currentQuestionId] // Mark for review
     );
     setCurrentQuestionIndex((prev) =>
       Math.min(filteredQuestions.length - 1, prev + 1)
@@ -106,8 +116,11 @@ export const ExamInterface = () => {
         if (!response.ok) throw new Error("Failed to fetch questions");
         const data = await response.json();
         if (data.length > 0) {
-          setQuestions(data);
-          const uniqueSubjects = [...new Set(data.map((q) => q.subject))];
+          const shuffledQuestions = shuffleArray(data);
+          setQuestions(shuffledQuestions);
+          const uniqueSubjects = [
+            ...new Set(shuffledQuestions.map((q) => q.subject)),
+          ];
           setSubjects(uniqueSubjects);
           setSelectedSubject(uniqueSubjects[0]);
         } else {
@@ -175,16 +188,16 @@ export const ExamInterface = () => {
 
   const handleOptionChange = (option) => {
     const key = filteredQuestions[currentQuestionIndex].id;
-  
+
     setSelectedOption((prev) => ({
       ...prev,
       [key]: option,
     }));
-  
+
     if (!attempted.includes(key)) {
       setAttempted([...attempted, key]);
     }
-  
+
     // Remove the question from the markedForReview list if it was marked
     if (markedForReview.includes(key)) {
       setMarkedForReview((prev) => prev.filter((id) => id !== key));
@@ -351,12 +364,14 @@ export const ExamInterface = () => {
                   Previous
                 </button>
                 <button
-                    className="mark-review-btn"
-                    onClick={handleMarkForReview}
-                    disabled={currentQuestionIndex >= filteredQuestions.length - 1}
-                  >
-                    Mark as Review & Next
-                  </button>
+                  className="mark-review-btn"
+                  onClick={handleMarkForReview}
+                  disabled={
+                    currentQuestionIndex >= filteredQuestions.length - 1
+                  }
+                >
+                  Mark as Review & Next
+                </button>
                 <button
                   className="nextbtn"
                   onClick={() =>
@@ -400,7 +415,7 @@ export const ExamInterface = () => {
                     {index + 1}
                   </button>
                 ))}
-                 <button
+                <button
                   className="submitbtn"
                   onClick={handleSubmit}
                   disabled={submitted}
