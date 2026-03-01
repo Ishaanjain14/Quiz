@@ -8,71 +8,8 @@
     ],
     "routes": [
         {
-            "src": "/assets/(.*)",
-            "dest": "frontend/dist/assets/$1"
-        },
-        {
-            "src": "/vite.svg",
-            "dest": "frontend/dist/vite.svg"
-        },
-        {
-            "src": "/questions.json",
-            "dest": "frontend/dist/questions.json"
-        },
-        {
-            "src": "/login",
-            "dest": "app.js",
-            "methods": [
-                "POST"
-            ]
-        },
-        {
-            "src": "/check-submission/(.*)",
-            "dest": "app.js"
-        },
-        {
-            "src": "/upload-students",
-            "dest": "app.js",
-            "methods": [
-                "POST"
-            ]
-        },
-        {
-            "src": "/submit",
-            "dest": "app.js",
-            "methods": [
-                "POST"
-            ]
-        },
-        {
-            "src": "/api/(.*)",
-            "dest": "app.js"
-        },
-        {
-            "src": "/set-schedule",
-            "dest": "app.js",
-            "methods": [
-                "POST"
-            ]
-        },
-        {
-            "src": "/get-schedule",
-            "dest": "app.js"
-        },
-        {
-            "src": "/download/(.*)",
-            "dest": "app.js"
-        },
-        {
-            "src": "/upload",
-            "dest": "app.js",
-            "methods": [
-                "POST"
-            ]
-        },
-        {
             "src": "/(.*)",
-            "dest": "frontend/dist/index.html"
+            "dest": "app.js"
         }
     ]
 }
