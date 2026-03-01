@@ -1,0 +1,233 @@
+/* ===== Instructions Page — Light Theme ===== */
+
+.instructions-container {
+  font-family: 'Inter', system-ui, sans-serif;
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  padding: 40px 20px;
+}
+
+.instructions-content {
+  max-width: 800px;
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 48px 44px;
+  box-shadow: var(--shadow-lg);
+  animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.instructions-content h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.instructions-content h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--accent-secondary);
+  margin-bottom: 20px;
+}
+
+.instructions-note {
+  font-weight: 500;
+  color: var(--accent-warning);
+  font-size: 0.9rem;
+  padding: 10px 16px;
+  background: rgba(217, 119, 6, 0.06);
+  border-left: 3px solid var(--accent-warning);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin-bottom: 20px;
+}
+
+.instructions-list {
+  margin: 16px 0 24px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.instructions-list li {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.instructions-list li:last-child {
+  border-bottom: none;
+}
+
+/* Checkbox */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-top: 24px;
+  padding: 14px 16px;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.checkbox-container:hover {
+  border-color: var(--accent-primary);
+}
+
+.checkbox-container input {
+  margin-right: 12px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-primary);
+  cursor: pointer;
+}
+
+.checkbox-container label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+/* Proceed button */
+.proceed-button-container {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.proceed-button {
+  padding: 14px 48px;
+  background: var(--gradient-primary);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-normal);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.proceed-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+}
+
+/* Test Schedule */
+.test-schedule {
+  margin-top: 28px;
+  padding: 20px;
+  background: rgba(8, 145, 178, 0.04);
+  border: 1px solid rgba(8, 145, 178, 0.12);
+  border-radius: var(--radius-md);
+}
+
+.test-schedule h3 {
+  color: var(--accent-secondary);
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+}
+
+.test-schedule p {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin: 4px 0;
+}
+
+/* Pop-up */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.popup {
+  background: #fff;
+  border: 1px solid var(--border-color);
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  width: 360px;
+  max-width: 90vw;
+  animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.popup p {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.popup button {
+  padding: 10px 32px;
+  background: var(--gradient-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.popup button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.25);
+}
