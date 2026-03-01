@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "Student": "Ananya Singh",
+    "RollNumber": 1004,
+    "Score": 2,
+    "isSuspicious": false
+  },
+  {
+    "Student": "Aarav Sharma",
+    "RollNumber": 1001,
+    "Score": 2,
+    "isSuspicious": false
+  }
+]

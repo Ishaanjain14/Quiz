@@ -239,6 +239,19 @@ app.get("/api/students", (req, res) => {
 });
 
 /* ===========================
+        Clear Results
+=========================== */
+app.post("/clear-results", (req, res) => {
+  try {
+    writeJSONFile(RESULTS_FILE, []);
+    res.json({ message: "All results cleared successfully" });
+  } catch (err) {
+    console.error("Error clearing results:", err);
+    res.status(500).json({ error: "Failed to clear results" });
+  }
+});
+
+/* ===========================
         Test Scheduling
 =========================== */
 const readSchedule = () => (fs.existsSync(SCHEDULE_FILE) ? JSON.parse(fs.readFileSync(SCHEDULE_FILE, "utf-8")) : {});

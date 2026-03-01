@@ -21,6 +21,7 @@ export const UploadExcel = () => {
   const [loadingQuestions, setLoadingQuestions] = useState(false);
   const [loadingStudents, setLoadingStudents] = useState(false);
   const [isTestOver, setIsTestOver] = useState(false);
+  const [clearMessage, setClearMessage] = useState("");
   const navigate = useNavigate();
   // Handle file selection
   const handleFileChange = (event, setFileFunction) => {
@@ -159,6 +160,18 @@ export const UploadExcel = () => {
     }
   };
 
+  const handleClearResults = async () => {
+    if (!window.confirm("Are you sure you want to clear all results? Students will be able to retake the exam.")) return;
+    try {
+      const response = await fetch("/clear-results", { method: "POST" });
+      const data = await response.json();
+      setClearMessage(data.message || "Results cleared!");
+    } catch (error) {
+      console.error("Clear results failed:", error);
+      setClearMessage("Failed to clear results.");
+    }
+  };
+
   return (
     <div className="upload-container">
       <h1>ADMIN PORTAL</h1>
@@ -266,6 +279,15 @@ export const UploadExcel = () => {
             You can download results only after the test is over.
           </p>
         )}
+      </section>
+      {/* Clear Results */}
+      <section className="upload-section">
+        <h2>🗑️ Reset Exam</h2>
+        <p style={{ fontSize: "0.9em", color: "#666", margin: "0 0 10px" }}>Clear all results so students can retake the exam.</p>
+        <button onClick={handleClearResults} style={{ backgroundColor: "#e74c3c" }}>
+          Clear All Results
+        </button>
+        {clearMessage && <p className="feedback-message">{clearMessage}</p>}
       </section>
     </div>
   );
