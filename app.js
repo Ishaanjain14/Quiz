@@ -69,8 +69,8 @@ const hasStudentSubmitted = (rollNumber) => {
 =========================== */
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
-  message: "Too many login attempts. Please try again later.",
+  max: 20,
+  message: { success: false, message: "Too many login attempts. Please try again later." },
 });
 
 app.post("/login", loginLimiter, (req, res) => {
