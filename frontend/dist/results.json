@@ -1,0 +1,20 @@
+[
+  {
+    "Student": "John Doe",
+    "RollNumber": 121,
+    "Score": 1,
+    "isSuspicious": false
+  },
+  {
+    "Student": "Jane Smith",
+    "RollNumber": 122,
+    "Score": 1,
+    "isSuspicious": true
+  },
+  {
+    "Student": "Ananya Singh",
+    "RollNumber": 1004,
+    "Score": 4,
+    "isSuspicious": false
+  }
+]

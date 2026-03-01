@@ -1,0 +1,197 @@
+[
+  {
+    "id": 1,
+    "subject": "Mathematics",
+    "question": "What is 15 × 12?",
+    "options": [
+      "170",
+      "180",
+      "190",
+      "160"
+    ],
+    "marks": 2,
+    "correctAnswer": "180"
+  },
+  {
+    "id": 2,
+    "subject": "Mathematics",
+    "question": "What is the square root of 144?",
+    "options": [
+      "10",
+      "11",
+      "12",
+      "14"
+    ],
+    "marks": 2,
+    "correctAnswer": "12"
+  },
+  {
+    "id": 3,
+    "subject": "Mathematics",
+    "question": "What is 7³?",
+    "options": [
+      "243",
+      "343",
+      "441",
+      "512"
+    ],
+    "marks": 2,
+    "correctAnswer": "343"
+  },
+  {
+    "id": 4,
+    "subject": "Mathematics",
+    "question": "If x + 5 = 12, what is x?",
+    "options": [
+      "5",
+      "6",
+      "7",
+      "8"
+    ],
+    "marks": 1,
+    "correctAnswer": "7"
+  },
+  {
+    "id": 5,
+    "subject": "Mathematics",
+    "question": "What is the value of π (approx)?",
+    "options": [
+      "3.14",
+      "2.71",
+      "1.41",
+      "1.73"
+    ],
+    "marks": 1,
+    "correctAnswer": "3.14"
+  },
+  {
+    "id": 6,
+    "subject": "Science",
+    "question": "What is the chemical symbol for water?",
+    "options": [
+      "H2O",
+      "CO2",
+      "NaCl",
+      "O2"
+    ],
+    "marks": 1,
+    "correctAnswer": "H2O"
+  },
+  {
+    "id": 7,
+    "subject": "Science",
+    "question": "What is the speed of light?",
+    "options": [
+      "3×10⁶ m/s",
+      "3×10⁸ m/s",
+      "3×10¹⁰ m/s",
+      "3×10⁴ m/s"
+    ],
+    "marks": 2,
+    "correctAnswer": "3×10⁸ m/s"
+  },
+  {
+    "id": 8,
+    "subject": "Science",
+    "question": "Which planet is known as the Red Planet?",
+    "options": [
+      "Venus",
+      "Jupiter",
+      "Mars",
+      "Saturn"
+    ],
+    "marks": 1,
+    "correctAnswer": "Mars"
+  },
+  {
+    "id": 9,
+    "subject": "Science",
+    "question": "What gas do plants absorb?",
+    "options": [
+      "Oxygen",
+      "Nitrogen",
+      "Carbon Dioxide",
+      "Hydrogen"
+    ],
+    "marks": 1,
+    "correctAnswer": "Carbon Dioxide"
+  },
+  {
+    "id": 10,
+    "subject": "Science",
+    "question": "What is the atomic number of Carbon?",
+    "options": [
+      "4",
+      "6",
+      "8",
+      "12"
+    ],
+    "marks": 2,
+    "correctAnswer": "6"
+  },
+  {
+    "id": 11,
+    "subject": "General Knowledge",
+    "question": "Who wrote Romeo and Juliet?",
+    "options": [
+      "Charles Dickens",
+      "William Shakespeare",
+      "Mark Twain",
+      "Jane Austen"
+    ],
+    "marks": 1,
+    "correctAnswer": "William Shakespeare"
+  },
+  {
+    "id": 12,
+    "subject": "General Knowledge",
+    "question": "What is the capital of Japan?",
+    "options": [
+      "Seoul",
+      "Beijing",
+      "Tokyo",
+      "Bangkok"
+    ],
+    "marks": 1,
+    "correctAnswer": "Tokyo"
+  },
+  {
+    "id": 13,
+    "subject": "General Knowledge",
+    "question": "Which is the largest ocean?",
+    "options": [
+      "Atlantic",
+      "Indian",
+      "Arctic",
+      "Pacific"
+    ],
+    "marks": 1,
+    "correctAnswer": "Pacific"
+  },
+  {
+    "id": 14,
+    "subject": "General Knowledge",
+    "question": "In which year did World War II end?",
+    "options": [
+      "1943",
+      "1944",
+      "1945",
+      "1946"
+    ],
+    "marks": 2,
+    "correctAnswer": "1945"
+  },
+  {
+    "id": 15,
+    "subject": "General Knowledge",
+    "question": "What is the currency of the UK?",
+    "options": [
+      "Euro",
+      "Dollar",
+      "Pound Sterling",
+      "Franc"
+    ],
+    "marks": 1,
+    "correctAnswer": "Pound Sterling"
+  }
+]
