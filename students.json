@@ -1,0 +1,32 @@
+[
+  {
+    "Name": "Aarav Sharma",
+    "Roll Number": 1001,
+    "Email": "aarav.sharma@test.com",
+    "Image": ""
+  },
+  {
+    "Name": "Priya Patel",
+    "Roll Number": 1002,
+    "Email": "priya.patel@test.com",
+    "Image": ""
+  },
+  {
+    "Name": "Rohan Gupta",
+    "Roll Number": 1003,
+    "Email": "rohan.gupta@test.com",
+    "Image": ""
+  },
+  {
+    "Name": "Ananya Singh",
+    "Roll Number": 1004,
+    "Email": "ananya.singh@test.com",
+    "Image": ""
+  },
+  {
+    "Name": "Vikram Reddy",
+    "Roll Number": 1005,
+    "Email": "vikram.reddy@test.com",
+    "Image": ""
+  }
+]

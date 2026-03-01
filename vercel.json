@@ -1,0 +1,68 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "app.js",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "frontend/dist/**",
+            "use": "@vercel/static"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/login",
+            "dest": "app.js",
+            "methods": [
+                "POST"
+            ]
+        },
+        { "src": "/check-submission/(.*)", "dest": "app.js" },
+        {
+            "src": "/upload",
+            "dest": "app.js",
+            "methods": [
+                "POST"
+            ]
+        },
+        {
+            "src": "/upload-students",
+            "dest": "app.js",
+            "methods": [
+                "POST"
+            ]
+        },
+        {
+            "src": "/submit",
+            "dest": "app.js",
+            "methods": [
+                "POST"
+            ]
+        },
+        {
+            "src": "/api/(.*)",
+            "dest": "app.js"
+        },
+        {
+            "src": "/set-schedule",
+            "dest": "app.js"
+        },
+        {
+            "src": "/get-schedule",
+            "dest": "app.js"
+        },
+        {
+            "src": "/download/(.*)",
+            "dest": "app.js"
+        },
+        {
+            "src": "/socket.io/(.*)",
+            "dest": "app.js"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "frontend/dist/$1"
+        }
+    ]
+}
